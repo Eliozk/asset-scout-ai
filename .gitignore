@@ -42,3 +42,8 @@ next-env.d.ts
 
 # semantic search POC (Milestone 3 Phase 0) — never commit downloaded model weights
 /poc/semantic-search/.model-cache/
+
+# embedding generation script's model cache (Milestone 3 Phase 1) — never commit downloaded model weights.
+# Note: the generated ARTIFACT itself (public/semantic-search/) IS committed — only the raw model
+# weights downloaded to produce it are excluded here.
+/.cache/

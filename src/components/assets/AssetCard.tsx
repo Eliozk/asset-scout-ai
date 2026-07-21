@@ -10,9 +10,11 @@ interface AssetCardProps {
   readonly asset: AssetSearchResult;
   readonly isFavorite: boolean;
   readonly onToggleFavorite: () => void;
+  /** Present only when the local semantic model successfully scored this specific asset for the current query. */
+  readonly semanticScore?: number;
 }
 
-export function AssetCard({ asset, isFavorite, onToggleFavorite }: AssetCardProps) {
+export function AssetCard({ asset, isFavorite, onToggleFavorite, semanticScore }: AssetCardProps) {
   const source = ASSET_SOURCES[asset.source];
   const hasFormats = asset.formats !== undefined && asset.formats.length > 0;
   const provenanceParts = [
@@ -41,7 +43,11 @@ export function AssetCard({ asset, isFavorite, onToggleFavorite }: AssetCardProp
           <span className="rounded-md border border-border-strong px-2 py-0.5 text-text-muted">
             {asset.license}
           </span>
-          <MatchScoreBadge score={asset.matchScore} />
+          {semanticScore !== undefined ? (
+            <MatchScoreBadge score={semanticScore} mode="ai" />
+          ) : (
+            <MatchScoreBadge score={asset.matchScore} mode="keyword" />
+          )}
         </div>
 
         <p className="text-xs leading-relaxed text-text-muted">
