@@ -136,6 +136,12 @@ export interface AssetSearchResult {
   readonly assetType: AssetType;
   readonly pricing: AssetPricing;
   readonly license: AssetLicense;
+  /**
+   * The source's own exact license label, when it's more specific than our
+   * enum captures (e.g. Sketchfab's "CC Attribution-NonCommercial-NoDerivs").
+   * Never invented — only ever the literal string the source returned.
+   */
+  readonly licenseDetail?: string;
   /** Omitted when the source doesn't tell us exact file formats (e.g. we don't
    *  fetch per-asset file listings from Poly Haven for every search result). */
   readonly formats?: readonly AssetFileFormat[];

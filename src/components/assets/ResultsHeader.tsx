@@ -1,5 +1,5 @@
 import type { SortOption } from "@/domain/asset";
-import { PoweredByPolyHaven } from "@/components/layout/PoweredByPolyHaven";
+import { PoweredBySources } from "@/components/layout/PoweredBySources";
 import { SortSelect } from "./SortSelect";
 
 interface ResultsHeaderProps {
@@ -16,7 +16,7 @@ export function ResultsHeader({ count, sort, onSortChange }: ResultsHeaderProps)
           <span className="font-semibold text-foreground">{count}</span> live{" "}
           {count === 1 ? "result" : "results"}
         </span>
-        <PoweredByPolyHaven />
+        <PoweredBySources />
       </p>
       <SortSelect value={sort} onChange={onSortChange} />
     </div>

@@ -46,7 +46,7 @@ describe("useSemanticRanking", () => {
     const query: AssetSearchQuery = { ...DEFAULT_QUERY, text: "dragon" };
     const provider = makeProvider(deterministicResults);
 
-    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, provider));
+    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, [provider]));
 
     expect(result.current.status).toBe("loading");
     expect(result.current.ranked).toEqual(deterministicResults);
@@ -59,7 +59,7 @@ describe("useSemanticRanking", () => {
     const query: AssetSearchQuery = { ...DEFAULT_QUERY, text: "dragon" };
     const provider = makeProvider(deterministicResults);
 
-    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, provider));
+    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, [provider]));
 
     await waitFor(() => expect(result.current.status).toBe("unavailable"));
     expect(result.current.ranked).toEqual(deterministicResults);
@@ -87,7 +87,7 @@ describe("useSemanticRanking", () => {
     const query: AssetSearchQuery = { ...DEFAULT_QUERY, text: "a worn old ball for a realistic sports game" };
     const provider = makeProvider(candidatePool);
 
-    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, provider));
+    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, [provider]));
 
     await waitFor(() => expect(result.current.status).toBe("ready"));
     await waitFor(() => expect(result.current.ranked.map((a) => a.id)).toEqual(["b", "a"]));
@@ -108,7 +108,7 @@ describe("useSemanticRanking", () => {
     const query: AssetSearchQuery = { ...DEFAULT_QUERY, text: "" };
     const provider = makeProvider(deterministicResults);
 
-    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, provider));
+    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, [provider]));
 
     await waitFor(() => expect(result.current.status).toBe("ready"));
     expect(result.current.ranked).toEqual(deterministicResults);
@@ -128,7 +128,7 @@ describe("useSemanticRanking", () => {
     const query: AssetSearchQuery = { ...DEFAULT_QUERY, text: "dragon", sort: "price-asc" };
     const provider = makeProvider(deterministicResults);
 
-    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, provider));
+    const { result } = renderHook(() => useSemanticRanking(query, deterministicResults, [provider]));
 
     await waitFor(() => expect(result.current.status).toBe("ready"));
     expect(result.current.ranked).toEqual(deterministicResults);

@@ -17,10 +17,15 @@ interface AssetCardProps {
 export function AssetCard({ asset, isFavorite, onToggleFavorite, semanticScore }: AssetCardProps) {
   const source = ASSET_SOURCES[asset.source];
   const hasFormats = asset.formats !== undefined && asset.formats.length > 0;
+  // Sketchfab's terms require visible per-result attribution: creator, license,
+  // link to the original model (the "View original" button below), and a
+  // "Provided by Sketchfab" credit. Creator + license are already covered by
+  // the provenance/license display; this adds the required explicit credit.
   const provenanceParts = [
     asset.authors && asset.authors.length > 0 ? `By ${asset.authors.join(", ")}` : null,
     asset.resolution ? asset.resolution : null,
     asset.downloadCount !== undefined ? `${asset.downloadCount.toLocaleString()} downloads` : null,
+    asset.source === "sketchfab" ? "Provided by Sketchfab" : null,
   ].filter((part): part is string => part !== null);
 
   return (
@@ -41,7 +46,7 @@ export function AssetCard({ asset, isFavorite, onToggleFavorite, semanticScore }
             {formatPricing(asset.pricing)}
           </span>
           <span className="rounded-md border border-border-strong px-2 py-0.5 text-text-muted">
-            {asset.license}
+            {asset.licenseDetail ?? asset.license}
           </span>
           {semanticScore !== undefined ? (
             <MatchScoreBadge score={semanticScore} mode="ai" />

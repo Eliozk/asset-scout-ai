@@ -5,8 +5,12 @@ import type { AssetSearchProvider, AssetSearchQuery, AssetSearchResult } from "@
 import { getSemanticRuntime, type SemanticRuntime } from "@/lib/semantic/browser-runtime";
 import { rankBySemanticSimilarity } from "@/lib/semantic/ranking";
 import { polyHavenSearchProvider } from "@/lib/providers/polyhaven/provider";
+import { sketchfabSearchProvider } from "@/lib/providers/sketchfab/provider";
+import { fetchCombinedResults } from "@/lib/search/combined-search";
 
 export type SemanticStatus = "loading" | "ready" | "unavailable";
+
+const DEFAULT_PROVIDERS: readonly AssetSearchProvider[] = [polyHavenSearchProvider, sketchfabSearchProvider];
 
 interface SemanticOutput {
   readonly ranked: readonly AssetSearchResult[];
@@ -30,10 +34,15 @@ interface Settled {
  * literally appear on an asset (an AND match), which is the right behavior
  * for short deliberate queries but routinely zeroes out full natural-
  * language sentences before semantic search would ever get a candidate to
- * rank. So when semantic ranking is active, it fetches its own candidate
- * pool via the same provider with the search text cleared (all OTHER
- * filters — category, price, license, etc. — still apply); this is a cache
- * hit against the already-loaded catalog, not a new network request.
+ * rank. So when semantic ranking is active, it fetches its own broader
+ * candidate pool across ALL providers (same parallel/timeout/dedup pipeline
+ * as useAssetSearch) with the search text cleared — all OTHER filters
+ * (category, price, license, etc.) still apply.
+ *
+ * Only assets with a precomputed embedding get a semantic score — anything
+ * else (e.g. a live Sketchfab result the embeddings artifact doesn't cover
+ * yet) falls to a deterministic tail via rankBySemanticSimilarity and is
+ * never labeled "AI Match" by the UI, which only reads scoresById.
  *
  * Only ever active for the "best-match" sort and a non-empty query — an
  * explicit price/name sort, or no search text at all, is left entirely to
@@ -42,7 +51,7 @@ interface Settled {
 export function useSemanticRanking(
   query: AssetSearchQuery,
   deterministicResults: readonly AssetSearchResult[],
-  provider: AssetSearchProvider = polyHavenSearchProvider,
+  providers: readonly AssetSearchProvider[] = DEFAULT_PROVIDERS,
 ): { status: SemanticStatus; ranked: readonly AssetSearchResult[]; scoresById: ReadonlyMap<string, number> } {
   const [status, setStatus] = useState<SemanticStatus>("loading");
   const runtimeRef = useRef<SemanticRuntime | null>(null);
@@ -76,8 +85,8 @@ export function useSemanticRanking(
     let cancelled = false;
     const candidatePoolQuery: AssetSearchQuery = { ...query, text: "" };
 
-    Promise.all([provider.search(candidatePoolQuery), runtime.embedQuery(query.text)])
-      .then(([candidatePool, queryEmbedding]) => {
+    Promise.all([fetchCombinedResults(providers, candidatePoolQuery), runtime.embedQuery(query.text)])
+      .then(([{ results: candidatePool }, queryEmbedding]) => {
         if (cancelled) return;
         const result = rankBySemanticSimilarity(candidatePool, queryEmbedding, runtime.embeddingsById);
         setSettled({ query, output: { ranked: result.ranked, scoresById: result.scoresById } });
@@ -90,7 +99,7 @@ export function useSemanticRanking(
     return () => {
       cancelled = true;
     };
-  }, [canRank, query, provider]);
+  }, [canRank, query, providers]);
 
   const isCurrent = settled !== null && settled.query === query;
 

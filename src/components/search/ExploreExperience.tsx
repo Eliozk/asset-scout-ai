@@ -15,6 +15,7 @@ import { SearchBar } from "./SearchBar";
 import { ProjectChips } from "./ProjectChips";
 import { CategoryToggle } from "./CategoryToggle";
 import { SemanticStatusNote } from "./SemanticStatusNote";
+import { ProviderErrorBanner } from "./ProviderErrorBanner";
 
 /**
  * Poly Haven's catalog is thousands of assets; an unscoped query can match
@@ -25,7 +26,7 @@ import { SemanticStatusNote } from "./SemanticStatusNote";
 const RESULT_RENDER_LIMIT = 60;
 
 export function ExploreExperience() {
-  const { query, setQuery, status, results, error } = useAssetSearch();
+  const { query, setQuery, status, results, error, providerOutcomes } = useAssetSearch();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const {
     status: semanticStatus,
@@ -90,10 +91,12 @@ export function ExploreExperience() {
             />
           )}
 
+          {status !== "error" && <ProviderErrorBanner providerOutcomes={providerOutcomes} />}
+
           <div className="mt-5">
             {status === "loading" && <LoadingState />}
             {status === "error" && (
-              <ErrorState message={error ?? "Poly Haven is unavailable right now. Please try again shortly."} />
+              <ErrorState message={error ?? "Search is unavailable right now. Please try again shortly."} />
             )}
             {status === "success" && semanticallyRanked.length === 0 && <EmptyState />}
             {status === "success" && semanticallyRanked.length > 0 && (
