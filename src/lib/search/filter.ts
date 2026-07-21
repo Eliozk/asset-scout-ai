@@ -1,4 +1,4 @@
-import type { AssetSearchQuery, AssetSearchResult } from "@/domain/asset";
+import type { AssetCategory, AssetDimension, AssetSearchQuery, AssetSearchResult } from "@/domain/asset";
 
 function matchesText(asset: AssetSearchResult, rawText: string): boolean {
   const text = rawText.trim().toLowerCase();
@@ -10,7 +10,7 @@ function matchesText(asset: AssetSearchResult, rawText: string): boolean {
     asset.style,
     asset.assetType,
     ...asset.tags,
-    ...asset.formats,
+    ...(asset.formats ?? []),
     ...asset.engines,
   ]
     .join(" ")
@@ -20,6 +20,13 @@ function matchesText(asset: AssetSearchResult, rawText: string): boolean {
     .split(/\s+/)
     .filter(Boolean)
     .every((term) => haystack.includes(term));
+}
+
+/** An asset dimensioned "both" (e.g. a flat texture usable in 2D or 3D work) matches either query filter. */
+function matchesCategory(assetCategory: AssetDimension, queryCategory: AssetCategory | "all"): boolean {
+  if (queryCategory === "all") return true;
+  if (assetCategory === "both") return true;
+  return assetCategory === queryCategory;
 }
 
 function matchesContextTags(asset: AssetSearchResult, contextTags: readonly string[]): boolean {
@@ -53,7 +60,7 @@ export function filterAssets(
   const { filters } = query;
 
   return assets.filter((asset) => {
-    if (query.category !== "all" && asset.category !== query.category) return false;
+    if (!matchesCategory(asset.category, query.category)) return false;
     if (!matchesText(asset, query.text)) return false;
     if (!matchesContextTags(asset, query.contextTags)) return false;
     if (!matchesPricing(asset, filters.pricing)) return false;
@@ -61,7 +68,7 @@ export function filterAssets(
     if (!matchesMulti(asset.license, filters.license)) return false;
     if (!matchesMulti(asset.source, filters.source)) return false;
     if (!matchesMulti(asset.style, filters.style)) return false;
-    if (!matchesAnyOf(asset.formats, filters.format)) return false;
+    if (!matchesAnyOf(asset.formats ?? [], filters.format)) return false;
     if (!matchesAnyOf(asset.engines, filters.engine)) return false;
     return true;
   });

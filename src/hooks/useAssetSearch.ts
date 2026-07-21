@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { AssetSearchProvider, AssetSearchQuery, AssetSearchResult } from "@/domain/asset";
 import { DEFAULT_QUERY } from "@/domain/asset";
-import { mockAssetSearchProvider } from "@/lib/search";
+import { polyHavenSearchProvider } from "@/lib/providers/polyhaven/provider";
 
 interface SettledResult {
   readonly query: AssetSearchQuery;
@@ -13,15 +13,16 @@ interface SettledResult {
 }
 
 /**
- * Drives asset search through the AssetSearchProvider contract, so swapping
- * the mock provider for a live one later requires no changes here.
+ * Drives asset search through the AssetSearchProvider contract. Defaults to
+ * the live Poly Haven provider; pass mockAssetSearchProvider explicitly for
+ * tests/development against the offline demo dataset.
  *
  * Status is derived during render by comparing the last *settled* query to
  * the current one, rather than set with a synchronous setState call inside
  * the effect body — that pattern causes an avoidable extra render and is
  * flagged by react-hooks/set-state-in-effect.
  */
-export function useAssetSearch(provider: AssetSearchProvider = mockAssetSearchProvider) {
+export function useAssetSearch(provider: AssetSearchProvider = polyHavenSearchProvider) {
   const [query, setQuery] = useState<AssetSearchQuery>(DEFAULT_QUERY);
   const [settled, setSettled] = useState<SettledResult | null>(null);
 

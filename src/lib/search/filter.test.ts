@@ -62,10 +62,22 @@ describe("filterAssets", () => {
     engines: ["Godot"],
     tags: ["sprite", "pixel", "mobile"],
   });
-  const assets = [dragon, sword, sprite];
+  const texture = makeAsset({
+    id: "texture",
+    name: "Aerial Asphalt Texture",
+    description: "A tileable road texture usable on 2D or 3D surfaces.",
+    source: "polyhaven",
+    category: "both",
+    assetType: "Texture",
+    style: "Realistic",
+    engines: ["Engine-agnostic"],
+    formats: undefined,
+    tags: ["asphalt", "road"],
+  });
+  const assets = [dragon, sword, sprite, texture];
 
   it("returns every asset for an empty query", () => {
-    expect(filterAssets(assets, DEFAULT_QUERY)).toHaveLength(3);
+    expect(filterAssets(assets, DEFAULT_QUERY)).toHaveLength(4);
   });
 
   it("matches free text against name, description, and tags", () => {
@@ -80,7 +92,19 @@ describe("filterAssets", () => {
 
   it("filters by category", () => {
     const result = filterAssets(assets, makeQuery({ category: "2D" }));
-    expect(result.map((a) => a.id)).toEqual(["sprite"]);
+    expect(result.map((a) => a.id).sort()).toEqual(["sprite", "texture"].sort());
+  });
+
+  it("includes 'both' dimension assets in both the 2D and 3D filters", () => {
+    const in2d = filterAssets(assets, makeQuery({ category: "2D" }));
+    const in3d = filterAssets(assets, makeQuery({ category: "3D" }));
+    expect(in2d.map((a) => a.id)).toContain("texture");
+    expect(in3d.map((a) => a.id)).toContain("texture");
+  });
+
+  it("does not crash matching text when formats is not provided", () => {
+    const result = filterAssets(assets, makeQuery({ text: "asphalt" }));
+    expect(result.map((a) => a.id)).toEqual(["texture"]);
   });
 
   it("filters by pricing", () => {

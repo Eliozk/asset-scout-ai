@@ -14,6 +14,14 @@ import { SearchBar } from "./SearchBar";
 import { ProjectChips } from "./ProjectChips";
 import { CategoryToggle } from "./CategoryToggle";
 
+/**
+ * Poly Haven's catalog is thousands of assets; an unscoped query can match
+ * hundreds+. Rendering that many cards at once — each requesting a real
+ * remote thumbnail — makes the page sluggish, so we cap how many mount at
+ * once while still reporting the true total match count above the grid.
+ */
+const RESULT_RENDER_LIMIT = 60;
+
 export function ExploreExperience() {
   const { query, setQuery, status, results, error } = useAssetSearch();
   const { favoriteIds, toggleFavorite } = useFavorites();
@@ -51,7 +59,12 @@ export function ExploreExperience() {
         <CategoryToggle value={query.category} onChange={setCategory} />
       </div>
 
-      <div className="mt-10 flex flex-col gap-6 lg:flex-row lg:items-start">
+      <p className="mx-auto mt-4 max-w-md text-center text-xs text-text-faint">
+        Results are ranked by keyword, tag, and category relevance today. Semantic AI-powered
+        ranking is planned for an upcoming milestone.
+      </p>
+
+      <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-start">
         <FilterSidebar
           filters={query.filters}
           onChange={(filters) => setQuery((current) => ({ ...current, filters }))}
@@ -65,18 +78,34 @@ export function ExploreExperience() {
             />
           </div>
 
-          <ResultsHeader
-            count={results.length}
-            sort={query.sort}
-            onSortChange={(sort) => setQuery((current) => ({ ...current, sort }))}
-          />
+          {status !== "error" && (
+            <ResultsHeader
+              count={results.length}
+              sort={query.sort}
+              onSortChange={(sort) => setQuery((current) => ({ ...current, sort }))}
+            />
+          )}
 
           <div className="mt-5">
             {status === "loading" && <LoadingState />}
-            {status === "error" && error !== null && <ErrorState message={error} />}
+            {status === "error" && (
+              <ErrorState message={error ?? "Poly Haven is unavailable right now. Please try again shortly."} />
+            )}
             {status === "success" && results.length === 0 && <EmptyState />}
             {status === "success" && results.length > 0 && (
-              <AssetGrid assets={results} favoriteIds={favoriteIds} onToggleFavorite={toggleFavorite} />
+              <>
+                <AssetGrid
+                  assets={results.slice(0, RESULT_RENDER_LIMIT)}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={toggleFavorite}
+                />
+                {results.length > RESULT_RENDER_LIMIT && (
+                  <p className="mt-6 text-center text-xs text-text-faint">
+                    Showing the top {RESULT_RENDER_LIMIT} of {results.length} matches — refine your search or
+                    filters to narrow further.
+                  </p>
+                )}
+              </>
             )}
           </div>
         </div>

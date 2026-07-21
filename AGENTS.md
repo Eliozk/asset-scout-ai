@@ -21,15 +21,27 @@ overview; this section is the enforceable summary.
   interface — don't special-case mock behavior in the hooks or components that call it.
 - **Server components by default.** Add `"use client"` only to components that need state,
   effects, or a browser API. Don't push the directive higher up the tree than necessary.
-- **No remote image URLs.** Previews are CSS/gradient placeholders (`components/assets/AssetPreview.tsx`
-  + `asset-visuals.ts`). If real thumbnails are introduced later, they need an explicit
-  `next.config.ts` `images.remotePatterns` entry and review — don't add remote `<img>`/`next/image`
-  sources without that.
+- **Remote images stay narrowly scoped.** Only `cdn.polyhaven.com` is allowed in
+  `next.config.ts` `images.remotePatterns`. Adding another remote host needs the same explicit
+  review. `AssetPreview.tsx` always keeps the CSS/gradient placeholder as a fallback for missing or
+  failed thumbnails — never assume a remote image will load.
+- **External providers are called server-side only.** A live provider (e.g. Poly Haven) is fetched
+  exclusively from its own Route Handler under `src/app/api/providers/<name>/route.ts`
+  (`src/lib/providers/<name>/fetch-assets.ts` holds the actual `fetch()` call, required headers,
+  timeout, and caching). Client code — including the matching `AssetSearchProvider` in
+  `src/lib/providers/<name>/provider.ts` — only ever calls our own route, never the third-party API
+  directly. Treat every external response as untrusted: validate with manual type guards
+  (`raw-types.ts`) and skip malformed entries instead of throwing.
 - **`localStorage` access must stay SSR-safe.** Go through `src/lib/storage.ts` or
   `useSyncExternalStore` (see `hooks/useFavorites.ts`) — never read/write `localStorage` directly
   in a component or during render.
 - **No state-management library and no `any`.** Local component state + the two hooks
   (`useAssetSearch`, `useFavorites`) are sufficient for this app's scope.
+- **Don't invent compatibility data.** Only set `formats`/engine-specific claims when the source
+  actually provides them (see `AssetSearchResult.formats` being optional for exactly this reason).
+- **Live relevance is not AI.** `matchScore`/`whyItFits` for live providers come from
+  `src/lib/search/relevance.ts`, a deterministic tag/text/category scorer — label it "relevance" in
+  the UI, never as an AI judgment.
 
 ## Required verification commands
 

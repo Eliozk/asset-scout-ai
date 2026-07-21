@@ -1,4 +1,4 @@
-import { Box, Car, Film, Layers, LayoutGrid, Mountain, Sparkles, Swords, User } from "lucide-react";
+import { Box, Car, Film, Layers, LayoutGrid, Mountain, Sparkles, Sun, SwatchBook, Swords, User } from "lucide-react";
 import type { AssetStyle, AssetType } from "@/domain/asset";
 
 export const ASSET_TYPE_ICONS: Readonly<Record<AssetType, typeof Box>> = {
@@ -11,6 +11,8 @@ export const ASSET_TYPE_ICONS: Readonly<Record<AssetType, typeof Box>> = {
   UI: LayoutGrid,
   Material: Layers,
   Animation: Film,
+  HDRI: Sun,
+  Texture: SwatchBook,
 };
 
 /** Deterministic gradient per style, used by the CSS-only preview placeholder. */

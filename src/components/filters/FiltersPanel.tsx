@@ -14,6 +14,7 @@ import {
   type PricingFilter,
 } from "@/domain/asset";
 import { FilterCheckboxGroup } from "./FilterCheckboxGroup";
+import { PolyHavenTypeQuickFilter } from "./PolyHavenTypeQuickFilter";
 
 const PRICING_OPTIONS: readonly { label: string; value: PricingFilter }[] = [
   { label: "All", value: "all" },
@@ -44,6 +45,8 @@ export function FiltersPanel({ filters, onChange }: FiltersPanelProps) {
           Clear all
         </button>
       </div>
+
+      <PolyHavenTypeQuickFilter selected={filters.assetType} onChange={(next) => update("assetType", next)} />
 
       <FilterCheckboxGroup
         title="Asset type"

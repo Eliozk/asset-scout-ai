@@ -12,9 +12,9 @@ export function MatchScoreBadge({ score }: MatchScoreBadgeProps) {
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold ${scoreColorClass(score)}`}
-      title="Demonstration AI match score"
+      title="Deterministic relevance score based on keyword/tag/category overlap — not an AI judgment"
     >
-      {score}% match
+      {score}% relevance
     </span>
   );
 }

@@ -10,6 +10,15 @@
 export const ASSET_CATEGORIES = ["2D", "3D"] as const;
 export type AssetCategory = (typeof ASSET_CATEGORIES)[number];
 
+/**
+ * An asset's actual dimensionality. Distinct from AssetCategory (the query's
+ * 2D/3D/All selector): some assets — e.g. a Poly Haven texture, which is a
+ * flat image usable on both a 2D sprite and a 3D material — legitimately fit
+ * both filters at once, which "both" represents.
+ */
+export const ASSET_DIMENSIONS = ["2D", "3D", "both"] as const;
+export type AssetDimension = (typeof ASSET_DIMENSIONS)[number];
+
 export const ASSET_SOURCE_IDS = [
   "sketchfab",
   "polyhaven",
@@ -69,6 +78,8 @@ export const ASSET_TYPES = [
   "UI",
   "Material",
   "Animation",
+  "HDRI",
+  "Texture",
 ] as const;
 export type AssetType = (typeof ASSET_TYPES)[number];
 
@@ -121,19 +132,37 @@ export interface AssetSearchResult {
   readonly name: string;
   readonly description: string;
   readonly source: AssetSourceId;
-  readonly category: AssetCategory;
+  readonly category: AssetDimension;
   readonly assetType: AssetType;
   readonly pricing: AssetPricing;
   readonly license: AssetLicense;
-  readonly formats: readonly AssetFileFormat[];
+  /** Omitted when the source doesn't tell us exact file formats (e.g. we don't
+   *  fetch per-asset file listings from Poly Haven for every search result). */
+  readonly formats?: readonly AssetFileFormat[];
   readonly engines: readonly EngineCompatibility[];
   readonly style: AssetStyle;
   /** Lowercase free-text tags used for search matching and quick project chips. */
   readonly tags: readonly string[];
-  /** Placeholder AI match score (0-100). Demonstration data only in this milestone. */
+  /**
+   * 0-100 relevance/match indicator. For the mock dataset this is
+   * hand-authored demo content; for live providers it's a deterministic
+   * relevance score computed from the query (see lib/search/relevance.ts) —
+   * never a real AI judgment.
+   */
   readonly matchScore: number;
-  /** Placeholder "why it fits" explanation. Demonstration data only in this milestone. */
+  /** Deterministic "why it fits" explanation — not AI-generated analysis. */
   readonly whyItFits: string;
   readonly externalUrl: string;
   readonly addedAt: string;
+  /** Real preview image URL, when the source provides one. */
+  readonly thumbnailUrl?: string;
+  /** The following are only ever populated when the source actually provides them. */
+  readonly authors?: readonly string[];
+  readonly downloadCount?: number;
+  /** Pixel resolution as a human string, e.g. "8192×8192". */
+  readonly resolution?: string;
+  /** Physical size in millimeters: [width, height] for a texture, [width, height, depth] for a model. */
+  readonly dimensionsMm?: readonly number[];
+  readonly polycount?: number;
+  readonly hasLods?: boolean;
 }
