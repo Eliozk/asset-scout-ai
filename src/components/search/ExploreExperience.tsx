@@ -16,6 +16,7 @@ import { ProjectChips } from "./ProjectChips";
 import { CategoryToggle } from "./CategoryToggle";
 import { SemanticStatusNote } from "./SemanticStatusNote";
 import { ProviderErrorBanner } from "./ProviderErrorBanner";
+import { MarketplaceSearchHub } from "./MarketplaceSearchHub";
 import { applySourceDiversity } from "@/lib/search/source-diversity";
 
 /**
@@ -119,6 +120,8 @@ export function ExploreExperience() {
           </div>
         </div>
       </div>
+
+      <MarketplaceSearchHub query={query.text} />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { Logo } from "./Logo";
 const NAV_LINKS = [
   { href: "/", label: "Explore" },
   { href: "/favorites", label: "Favorites" },
+  { href: "/sources", label: "Sources" },
 ] as const;
 
 function NavLink({ href, label, onNavigate }: { href: string; label: string; onNavigate?: () => void }) {
