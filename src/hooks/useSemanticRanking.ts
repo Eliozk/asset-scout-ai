@@ -6,11 +6,16 @@ import { getSemanticRuntime, type SemanticRuntime } from "@/lib/semantic/browser
 import { rankBySemanticSimilarity } from "@/lib/semantic/ranking";
 import { polyHavenSearchProvider } from "@/lib/providers/polyhaven/provider";
 import { sketchfabSearchProvider } from "@/lib/providers/sketchfab/provider";
+import { kenneyCatalogSearchProvider } from "@/lib/providers/kenney/provider";
 import { fetchCombinedResults } from "@/lib/search/combined-search";
 
 export type SemanticStatus = "loading" | "ready" | "unavailable";
 
-const DEFAULT_PROVIDERS: readonly AssetSearchProvider[] = [polyHavenSearchProvider, sketchfabSearchProvider];
+const DEFAULT_PROVIDERS: readonly AssetSearchProvider[] = [
+  polyHavenSearchProvider,
+  sketchfabSearchProvider,
+  kenneyCatalogSearchProvider,
+];
 
 interface SemanticOutput {
   readonly ranked: readonly AssetSearchResult[];
@@ -40,8 +45,8 @@ interface Settled {
  * (category, price, license, etc.) still apply.
  *
  * Only assets with a precomputed embedding get a semantic score — anything
- * else (e.g. a live Sketchfab result the embeddings artifact doesn't cover
- * yet) falls to a deterministic tail via rankBySemanticSimilarity and is
+ * else (e.g. a Sketchfab or Kenney result the embeddings artifact doesn't
+ * cover yet) falls to a deterministic tail via rankBySemanticSimilarity and is
  * never labeled "AI Match" by the UI, which only reads scoresById.
  *
  * Only ever active for the "best-match" sort and a non-empty query — an

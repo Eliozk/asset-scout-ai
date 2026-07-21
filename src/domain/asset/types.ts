@@ -22,6 +22,7 @@ export type AssetDimension = (typeof ASSET_DIMENSIONS)[number];
 export const ASSET_SOURCE_IDS = [
   "sketchfab",
   "polyhaven",
+  "kenney",
   "fab",
   "itchio",
   "unity-asset-store",
@@ -45,6 +46,11 @@ export const ASSET_SOURCES: Readonly<Record<AssetSourceId, AssetSource>> = {
     id: "polyhaven",
     label: "Poly Haven",
     homepageUrl: "https://polyhaven.com",
+  },
+  kenney: {
+    id: "kenney",
+    label: "Kenney",
+    homepageUrl: "https://kenney.nl",
   },
   fab: {
     id: "fab",

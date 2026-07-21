@@ -1,0 +1,677 @@
+[
+  {
+    "id": "kenney:blaster-kit",
+    "name": "Blaster Kit",
+    "description": "This 3D pack contains 40 files. It is tagged as: blaster, weapon, target",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Weapon",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "blaster",
+      "weapon",
+      "target"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/blaster-kit",
+    "addedAt": "2025-07-31",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/blaster-kit/7f0e90a313-1753959516/preview.png"
+  },
+  {
+    "id": "kenney:car-kit",
+    "name": "Car Kit",
+    "description": "This 3D pack is part of the 'Transport' series and contains 45 files. It is tagged as: car, vehicle, transportation, oopi",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Vehicle",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "car",
+      "vehicle",
+      "transportation",
+      "oopi"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/car-kit",
+    "addedAt": "2026-04-02",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/car-kit/81f9d77bc7-1775131953/preview.png"
+  },
+  {
+    "id": "kenney:city-kit-commercial",
+    "name": "City Kit (Commercial)",
+    "description": "This 3D pack is part of the 'City' series and contains 50 files. It is tagged as: city, skyscraper, building",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "city",
+      "skyscraper",
+      "building"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/city-kit-commercial",
+    "addedAt": "2025-07-21",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/city-kit-commercial/f9afc81822-1747481468/preview.png"
+  },
+  {
+    "id": "kenney:city-kit-industrial",
+    "name": "City Kit (Industrial)",
+    "description": "This 3D pack is part of the 'City' series and contains 25 files. It is tagged as: city, building, factory, warehouse",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "city",
+      "building",
+      "factory",
+      "warehouse"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/city-kit-industrial",
+    "addedAt": "2025-06-25",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/city-kit-industrial/aeeccdf3ee-1750838283/preview.png"
+  },
+  {
+    "id": "kenney:cube-pets",
+    "name": "Cube Pets",
+    "description": "This 3D pack contains 24 files. It is tagged as: pet, animal, dog, cat",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Character",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "pet",
+      "animal",
+      "dog",
+      "cat"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/cube-pets",
+    "addedAt": "2026-03-26",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/cube-pets/c97e02d815-1774520248/preview.png"
+  },
+  {
+    "id": "kenney:desert-shooter-pack",
+    "name": "Desert Shooter Pack",
+    "description": "This 2D pack contains 500 files. It is tagged as: shooter, roguelike, pixel, ui",
+    "source": "kenney",
+    "category": "2D",
+    "assetType": "UI",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Pixel-art",
+    "tags": [
+      "shooter",
+      "roguelike",
+      "pixel",
+      "ui"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/desert-shooter-pack",
+    "addedAt": "2025-09-25",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/desert-shooter-pack/6f8fe895c0-1758814235/preview.png"
+  },
+  {
+    "id": "kenney:development-essentials",
+    "name": "Development Essentials",
+    "description": "This Textures pack contains 15 files. It is tagged as: essential, prototype",
+    "source": "kenney",
+    "category": "both",
+    "assetType": "Texture",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Realistic",
+    "tags": [
+      "essential",
+      "prototype"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/development-essentials",
+    "addedAt": "2026-01-05",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/development-essentials/87174ad548-1767593444/preview.png"
+  },
+  {
+    "id": "kenney:factory-kit",
+    "name": "Factory Kit",
+    "description": "This 3D pack contains 140 files. It is tagged as: conveyor, belt, industrial, warehouse, factory",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "conveyor",
+      "belt",
+      "industrial",
+      "warehouse",
+      "factory"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/factory-kit",
+    "addedAt": "2026-05-01",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/factory-kit/f882243835-1777639585/preview.png"
+  },
+  {
+    "id": "kenney:fantasy-town-kit",
+    "name": "Fantasy Town Kit",
+    "description": "This 3D pack contains 160 files. It is tagged as: medieval, wall, town, building",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "medieval",
+      "wall",
+      "town",
+      "building"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/fantasy-town-kit",
+    "addedAt": "2025-08-03",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/fantasy-town-kit/9f9e8b0c4c-1754222358/preview.png"
+  },
+  {
+    "id": "kenney:flag-pack",
+    "name": "Flag Pack",
+    "description": "This 2D pack contains 230 files. It is tagged as: flag, country, language",
+    "source": "kenney",
+    "category": "2D",
+    "assetType": "Prop",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Cartoon",
+    "tags": [
+      "flag",
+      "country",
+      "language"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/flag-pack",
+    "addedAt": "2026-06-09",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/flag-pack/5e6ac1ed7c-1780995503/preview.png"
+  },
+  {
+    "id": "kenney:graveyard-kit",
+    "name": "Graveyard Kit",
+    "description": "This 3D pack contains 90 files. It is tagged as: graveyard, halloween, horror, monster, spooky",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "graveyard",
+      "halloween",
+      "horror",
+      "monster",
+      "spooky"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/graveyard-kit",
+    "addedAt": "2025-10-17",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/graveyard-kit/d1cc92aea2-1760691796/preview.png"
+  },
+  {
+    "id": "kenney:input-prompts",
+    "name": "Input Prompts",
+    "description": "This 2D pack is part of the 'Input Prompts' series and contains 1500 files. It is tagged as: input, prompt, button, gamepad, control, interface",
+    "source": "kenney",
+    "category": "2D",
+    "assetType": "UI",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Cartoon",
+    "tags": [
+      "input",
+      "prompt",
+      "button",
+      "gamepad",
+      "control",
+      "interface"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/input-prompts",
+    "addedAt": "2026-07-11",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/input-prompts/521ca9b941-1744026983/preview-xbox-series.png"
+  },
+  {
+    "id": "kenney:light-masks",
+    "name": "Light Masks",
+    "description": "This 2D pack is part of the 'VFX' series and contains 150 files. It is tagged as: light, shader, vfx, cookie",
+    "source": "kenney",
+    "category": "2D",
+    "assetType": "Prop",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Cartoon",
+    "tags": [
+      "light",
+      "shader",
+      "vfx",
+      "cookie"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/light-masks",
+    "addedAt": "2026-04-08",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/light-masks/718ab296a1-1775631590/preview.png"
+  },
+  {
+    "id": "kenney:mini-dungeon",
+    "name": "Mini Dungeon",
+    "description": "This 3D pack is part of the 'Mini' series and contains 25 files. It is tagged as: dungeon, rpg, roguelike, medieval",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "dungeon",
+      "rpg",
+      "roguelike",
+      "medieval"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/mini-dungeon",
+    "addedAt": "2026-02-16",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/mini-dungeon/e508b09988-1771249367/preview.png"
+  },
+  {
+    "id": "kenney:mini-forest",
+    "name": "Mini Forest",
+    "description": "This 3D pack is part of the 'Mini' series and contains 20 files. It is tagged as: forest, archer, tent, base",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "forest",
+      "archer",
+      "tent",
+      "base"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/mini-forest",
+    "addedAt": "2026-07-14",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/mini-forest/caeee17e96-1784024073/preview.png"
+  },
+  {
+    "id": "kenney:mobile-controls",
+    "name": "Mobile Controls",
+    "description": "This 2D pack contains 900 files. It is tagged as: control, prompt, button, hud, interface",
+    "source": "kenney",
+    "category": "2D",
+    "assetType": "UI",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Cartoon",
+    "tags": [
+      "control",
+      "prompt",
+      "button",
+      "hud",
+      "interface"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/mobile-controls",
+    "addedAt": "2025-08-09",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/mobile-controls/90787b1c18-1754738442/preview.png"
+  },
+  {
+    "id": "kenney:modular-cave-kit",
+    "name": "Modular Cave Kit",
+    "description": "This 3D pack is part of the 'Modular' series and contains 40 files. It is tagged as: tiles, modular, cave",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "tiles",
+      "modular",
+      "cave"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/modular-cave-kit",
+    "addedAt": "2026-07-10",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/modular-cave-kit/98586b397d-1783667086/preview.png"
+  },
+  {
+    "id": "kenney:modular-dungeon-kit",
+    "name": "Modular Dungeon Kit",
+    "description": "This 3D pack is part of the 'Modular' series and contains 40 files. It is tagged as: dungeon, modular, tiles",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "dungeon",
+      "modular",
+      "tiles"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/modular-dungeon-kit",
+    "addedAt": "2026-02-24",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/modular-dungeon-kit/0360646c6c-1771926042/preview.png"
+  },
+  {
+    "id": "kenney:modular-space-kit",
+    "name": "Modular Space Kit",
+    "description": "This 3D pack is part of the 'Modular' series and contains 40 files. It is tagged as: space, tiles, modular, sci-fi, station",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "space",
+      "tiles",
+      "modular",
+      "sci-fi",
+      "station"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/modular-space-kit",
+    "addedAt": "2026-02-15",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/modular-space-kit/7b9c52d41e-1771146080/preview.png"
+  },
+  {
+    "id": "kenney:new-platformer-pack",
+    "name": "New Platformer Pack",
+    "description": "This 2D pack contains 440 files. It is tagged as: platformer, tile, character, oopi",
+    "source": "kenney",
+    "category": "2D",
+    "assetType": "Character",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Cartoon",
+    "tags": [
+      "platformer",
+      "tile",
+      "character",
+      "oopi"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/new-platformer-pack",
+    "addedAt": "2025-12-03",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/new-platformer-pack/22ae1c8d57-1746559478/preview-tiles.png"
+  },
+  {
+    "id": "kenney:pirate-kit",
+    "name": "Pirate Kit",
+    "description": "This 3D pack contains 70 files. It is tagged as: pirate, boat, ship, island, tropical, character",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Character",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "pirate",
+      "boat",
+      "ship",
+      "island",
+      "tropical",
+      "character"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/pirate-kit",
+    "addedAt": "2026-02-17",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/pirate-kit/ae3180d290-1771333077/preview.png"
+  },
+  {
+    "id": "kenney:platformer-kit",
+    "name": "Platformer Kit",
+    "description": "This 3D pack contains 150 files. It is tagged as: platformer, level, oopi",
+    "source": "kenney",
+    "category": "3D",
+    "assetType": "Prop",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Low-poly",
+    "tags": [
+      "platformer",
+      "level",
+      "oopi"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/platformer-kit",
+    "addedAt": "2026-04-02",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/platformer-kit/7b2b1475c8-1775122236/preview.png"
+  },
+  {
+    "id": "kenney:retro-textures-fantasy",
+    "name": "Retro Textures Fantasy",
+    "description": "This Textures pack is part of the 'Retro' series and contains 115 files. It is tagged as: retro, texture",
+    "source": "kenney",
+    "category": "both",
+    "assetType": "Texture",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Realistic",
+    "tags": [
+      "retro",
+      "texture"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/retro-textures-fantasy",
+    "addedAt": "2026-01-15",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/retro-textures-fantasy/56de38c46e-1768475450/preview.png"
+  },
+  {
+    "id": "kenney:skyboxes",
+    "name": "Skyboxes",
+    "description": "This Textures pack contains 5 files. It is tagged as: skybox, sky, clouds, space, stars",
+    "source": "kenney",
+    "category": "both",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Realistic",
+    "tags": [
+      "skybox",
+      "sky",
+      "clouds",
+      "space",
+      "stars"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/skyboxes",
+    "addedAt": "2026-07-15",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/skyboxes/30f1f43340-1784123464/preview.png"
+  },
+  {
+    "id": "kenney:tiny-farm",
+    "name": "Tiny Farm",
+    "description": "This 2D pack is part of the 'Tiny' series and contains 130 files. It is tagged as: farm, rpg, roguelike, map, pixel",
+    "source": "kenney",
+    "category": "2D",
+    "assetType": "Environment",
+    "pricing": {
+      "model": "free"
+    },
+    "license": "CC0",
+    "engines": [
+      "Engine-agnostic"
+    ],
+    "style": "Pixel-art",
+    "tags": [
+      "farm",
+      "rpg",
+      "roguelike",
+      "map",
+      "pixel"
+    ],
+    "matchScore": 50,
+    "whyItFits": "Game asset pack from Kenney's Authorized Indexed Catalog.",
+    "externalUrl": "https://kenney.nl/assets/tiny-farm",
+    "addedAt": "2026-07-01",
+    "thumbnailUrl": "https://kenney.nl/media/pages/assets/tiny-farm/16901f996e-1782913581/preview.png"
+  }
+]

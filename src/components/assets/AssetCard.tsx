@@ -21,11 +21,15 @@ export function AssetCard({ asset, isFavorite, onToggleFavorite, semanticScore }
   // link to the original model (the "View original" button below), and a
   // "Provided by Sketchfab" credit. Creator + license are already covered by
   // the provenance/license display; this adds the required explicit credit.
+  // Kenney results similarly must be marked as coming from an "Authorized
+  // Indexed Catalog" (a curated static snapshot of Kenney's official feed,
+  // not a live/full-catalog integration) rather than blending in silently.
   const provenanceParts = [
     asset.authors && asset.authors.length > 0 ? `By ${asset.authors.join(", ")}` : null,
     asset.resolution ? asset.resolution : null,
     asset.downloadCount !== undefined ? `${asset.downloadCount.toLocaleString()} downloads` : null,
     asset.source === "sketchfab" ? "Provided by Sketchfab" : null,
+    asset.source === "kenney" ? "Kenney — Authorized Indexed Catalog" : null,
   ].filter((part): part is string => part !== null);
 
   return (

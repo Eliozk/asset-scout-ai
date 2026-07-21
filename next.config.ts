@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "media.sketchfab.com",
       },
+      {
+        protocol: "https",
+        hostname: "kenney.nl",
+      },
     ],
   },
 };

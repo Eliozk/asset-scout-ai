@@ -1,6 +1,6 @@
 import { ASSET_SOURCES, type AssetSourceId } from "@/domain/asset";
 
-const LIVE_SOURCE_IDS: readonly AssetSourceId[] = ["polyhaven", "sketchfab"];
+const LIVE_SOURCE_IDS: readonly AssetSourceId[] = ["polyhaven", "sketchfab", "kenney"];
 
 /**
  * Aggregate attribution for the currently-integrated live sources. Per-asset

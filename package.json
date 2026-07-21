@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "embeddings:generate": "tsx scripts/generate-embeddings.mts"
+    "embeddings:generate": "tsx scripts/generate-embeddings.mts",
+    "kenney:generate": "tsx scripts/generate-kenney-catalog.mts"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",

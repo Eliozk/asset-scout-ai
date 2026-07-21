@@ -7,6 +7,7 @@ import type { ProviderOutcome } from "@/lib/search/aggregate-providers";
 const PROVIDER_ID_TO_SOURCE: Readonly<Record<string, AssetSourceId>> = {
   "polyhaven-live": "polyhaven",
   "sketchfab-live": "sketchfab",
+  "kenney-catalog": "kenney",
 };
 
 interface ProviderErrorBannerProps {
