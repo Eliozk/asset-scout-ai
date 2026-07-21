@@ -60,4 +60,44 @@ describe("computeRelevance", () => {
     const relevance = computeRelevance(asset, DEFAULT_QUERY);
     expect(formatWhyItFits(relevance)).toBe("Matches your current filters.");
   });
+
+  it("does not let stopwords increase the score over an empty query", () => {
+    const asset = makeAsset({});
+    const empty = computeRelevance(asset, { ...DEFAULT_QUERY, text: "" });
+    const allStopwords = computeRelevance(asset, { ...DEFAULT_QUERY, text: "a for an the with of" });
+    expect(allStopwords.score).toBe(empty.score);
+    expect(allStopwords.reasons).toEqual(empty.reasons);
+  });
+
+  it("does not cite stopwords in the 'why it fits' reasons", () => {
+    const asset = makeAsset({ name: "Dirty Football", tags: ["ball", "sports"] });
+    const relevance = computeRelevance(asset, { ...DEFAULT_QUERY, text: "a worn ball for a realistic sports game" });
+    const matchReason = relevance.reasons.find((r) => r.startsWith("matches"));
+    expect(matchReason).toBeDefined();
+    for (const stopword of ["a", "for", "the", "with"]) {
+      expect(matchReason).not.toContain(`"${stopword}"`);
+      expect(matchReason?.split(", ")).not.toContain(stopword);
+    }
+    expect(matchReason).toContain("ball");
+  });
+
+  it("scores meaningful keywords on their own merit, not diluted by stopword count", () => {
+    const asset = makeAsset({ tags: ["dirty", "ball"] });
+    // Every meaningful term matches; stopwords ("a", "for") must not count
+    // toward the denominator and drag the ratio down.
+    const relevance = computeRelevance(asset, { ...DEFAULT_QUERY, text: "a dirty ball for" });
+    expect(relevance.score).toBe(80); // baseline 40 + full-ratio bonus (2/2 real terms matched) of 40
+  });
+
+  it("still matches short-but-meaningful game-asset terms like vr and 2d", () => {
+    const asset = makeAsset({ tags: ["vr", "2d"] });
+    const relevance = computeRelevance(asset, { ...DEFAULT_QUERY, text: "vr 2d" });
+    expect(relevance.reasons.some((r) => r.includes("vr") && r.includes("2d"))).toBe(true);
+  });
+
+  it("keeps existing single-keyword search behavior working", () => {
+    const asset = makeAsset({});
+    const relevance = computeRelevance(asset, { ...DEFAULT_QUERY, text: "stone" });
+    expect(formatWhyItFits(relevance)).toContain("stone");
+  });
 });

@@ -1,8 +1,9 @@
 import type { AssetCategory, AssetDimension, AssetSearchQuery, AssetSearchResult } from "@/domain/asset";
+import { tokenizeSearchText } from "./tokenize";
 
 function matchesText(asset: AssetSearchResult, rawText: string): boolean {
-  const text = rawText.trim().toLowerCase();
-  if (text === "") return true;
+  const terms = tokenizeSearchText(rawText);
+  if (terms.length === 0) return true;
 
   const haystack = [
     asset.name,
@@ -16,10 +17,7 @@ function matchesText(asset: AssetSearchResult, rawText: string): boolean {
     .join(" ")
     .toLowerCase();
 
-  return text
-    .split(/\s+/)
-    .filter(Boolean)
-    .every((term) => haystack.includes(term));
+  return terms.every((term) => haystack.includes(term));
 }
 
 /** An asset dimensioned "both" (e.g. a flat texture usable in 2D or 3D work) matches either query filter. */

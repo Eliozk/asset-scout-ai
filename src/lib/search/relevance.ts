@@ -1,4 +1,5 @@
 import type { AssetSearchQuery, AssetSearchResult } from "@/domain/asset";
+import { tokenizeSearchText } from "./tokenize";
 
 export interface Relevance {
   readonly score: number;
@@ -15,7 +16,7 @@ export function computeRelevance(asset: AssetSearchResult, query: AssetSearchQue
   const reasons: string[] = [];
   let score = 40;
 
-  const terms = query.text.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const terms = tokenizeSearchText(query.text);
   if (terms.length > 0) {
     const tagSet = new Set(asset.tags.map((tag) => tag.toLowerCase()));
     const haystack = `${asset.name} ${asset.description}`.toLowerCase();

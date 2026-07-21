@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# semantic search POC (Milestone 3 Phase 0) — never commit downloaded model weights
+/poc/semantic-search/.model-cache/

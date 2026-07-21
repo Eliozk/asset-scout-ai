@@ -138,4 +138,20 @@ describe("filterAssets", () => {
     const result = filterAssets(assets, makeQuery({ text: "nonexistent-term" }));
     expect(result).toEqual([]);
   });
+
+  it("ignores stopwords instead of requiring them to appear in every asset", () => {
+    const withStopwords = filterAssets(assets, makeQuery({ text: "a dragon for the" }));
+    const withoutStopwords = filterAssets(assets, makeQuery({ text: "dragon" }));
+    expect(withStopwords.map((a) => a.id)).toEqual(withoutStopwords.map((a) => a.id));
+  });
+
+  it("treats an all-stopword query the same as an empty query", () => {
+    const result = filterAssets(assets, makeQuery({ text: "a for an the" }));
+    expect(result).toHaveLength(4);
+  });
+
+  it("keeps hyphenated terms intact when matching style", () => {
+    const result = filterAssets(assets, makeQuery({ text: "low-poly" }));
+    expect(result.map((a) => a.id)).toEqual(["dragon"]);
+  });
 });
