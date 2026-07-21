@@ -24,12 +24,16 @@ export function AssetCard({ asset, isFavorite, onToggleFavorite, semanticScore }
   // Kenney results similarly must be marked as coming from an "Authorized
   // Indexed Catalog" (a curated static snapshot of Kenney's official feed,
   // not a live/full-catalog integration) rather than blending in silently.
+  // Pixabay's API terms require showing users where results are from
+  // whenever they're displayed — the source label above already does this
+  // generically, but this line makes it explicit and unambiguous per-result.
   const provenanceParts = [
     asset.authors && asset.authors.length > 0 ? `By ${asset.authors.join(", ")}` : null,
     asset.resolution ? asset.resolution : null,
     asset.downloadCount !== undefined ? `${asset.downloadCount.toLocaleString()} downloads` : null,
     asset.source === "sketchfab" ? "Provided by Sketchfab" : null,
     asset.source === "kenney" ? "Kenney — Authorized Indexed Catalog" : null,
+    asset.source === "pixabay" ? "Image provided by Pixabay" : null,
   ].filter((part): part is string => part !== null);
 
   return (

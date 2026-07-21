@@ -8,7 +8,7 @@ const POLY_HAVEN_ASSETS_URL = "https://api.polyhaven.com/assets";
 const USER_AGENT = "AssetScoutAI/1.0 (game asset search portfolio project)";
 
 const UPSTREAM_TIMEOUT_MS = 10_000;
-const REVALIDATE_SECONDS = 6 * 60 * 60; // ~6 hours
+const REVALIDATE_MS = 6 * 60 * 60 * 1000; // ~6 hours
 
 export interface PolyHavenCatalogResult {
   readonly assets: readonly AssetSearchResult[];
@@ -17,6 +17,26 @@ export interface PolyHavenCatalogResult {
 }
 
 export class PolyHavenUpstreamError extends Error {}
+
+/**
+ * Poly Haven's full `/assets` catalog is a single ~3MB JSON response —
+ * comfortably over Next.js's fetch Data Cache's hard 2MB-per-entry limit
+ * (passing `next: { revalidate }` on this fetch logs "Failed to set
+ * Next.js data cache ... items over 2MB can not be cached" on every single
+ * request and silently never actually caches anything, since Next just
+ * drops oversized entries rather than storing them).
+ *
+ * The raw response is never handed to Next's cache at all here — instead,
+ * the small, already-parsed/normalized PolyHavenCatalogResult (a few
+ * hundred KB of plain objects, not a 3MB raw JSON blob) is cached in a
+ * simple process-local variable. This is a real, working, zero-cost cache
+ * (no external service, no database) sized to what this app actually
+ * needs: a single always-on Node server (`next dev` / `next start`), not a
+ * multi-instance serverless deployment where an in-memory cache wouldn't
+ * be shared across instances anyway.
+ */
+let cachedCatalog: { readonly result: PolyHavenCatalogResult; readonly fetchedAt: number } | null = null;
+let inflightCatalog: Promise<PolyHavenCatalogResult> | null = null;
 
 /**
  * Pure: validates and normalizes a raw `/assets` response body. Split out
@@ -50,19 +70,16 @@ export function parseAndNormalizeCatalog(json: unknown): PolyHavenCatalogResult 
 }
 
 /**
- * Server-only: fetches Poly Haven's full asset catalog once (cached via
- * Next's fetch Data Cache for ~6h) and delegates to parseAndNormalizeCatalog.
- *
- * This module must only be imported from the Route Handler — client code
- * talks to our own /api/providers/polyhaven route instead, never to Poly
- * Haven directly.
+ * Fetches Poly Haven's `/assets` catalog fresh from the network (no Next.js
+ * fetch-cache options — see the module-level comment above for why) and
+ * normalizes it. Never called directly by app code; only through
+ * fetchPolyHavenCatalog, which wraps it with the in-memory cache.
  */
-export async function fetchPolyHavenCatalog(): Promise<PolyHavenCatalogResult> {
+async function fetchFreshCatalog(): Promise<PolyHavenCatalogResult> {
   let response: Response;
   try {
     response = await fetch(POLY_HAVEN_ASSETS_URL, {
       headers: { "User-Agent": USER_AGENT },
-      next: { revalidate: REVALIDATE_SECONDS },
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     });
   } catch (error) {
@@ -82,4 +99,40 @@ export async function fetchPolyHavenCatalog(): Promise<PolyHavenCatalogResult> {
   }
 
   return parseAndNormalizeCatalog(json);
+}
+
+/**
+ * Server-only: returns Poly Haven's full asset catalog, cached in-process
+ * for ~6h (see the module-level comment above for why this is a plain
+ * variable rather than Next's fetch Data Cache). Concurrent callers during
+ * a cache miss share a single in-flight request rather than each triggering
+ * their own ~3MB fetch from Poly Haven.
+ *
+ * This module must only be imported from the Route Handler — client code
+ * talks to our own /api/providers/polyhaven route instead, never to Poly
+ * Haven directly.
+ */
+export async function fetchPolyHavenCatalog(): Promise<PolyHavenCatalogResult> {
+  if (cachedCatalog && Date.now() - cachedCatalog.fetchedAt < REVALIDATE_MS) {
+    return cachedCatalog.result;
+  }
+
+  if (inflightCatalog) return inflightCatalog;
+
+  inflightCatalog = fetchFreshCatalog()
+    .then((result) => {
+      cachedCatalog = { result, fetchedAt: Date.now() };
+      return result;
+    })
+    .finally(() => {
+      inflightCatalog = null;
+    });
+
+  return inflightCatalog;
+}
+
+/** Test-only escape hatch — resets the in-memory cache so each test starts clean. Never called by app runtime code. */
+export function resetPolyHavenCatalogCacheForTests(): void {
+  cachedCatalog = null;
+  inflightCatalog = null;
 }

@@ -6,6 +6,7 @@ import { DEFAULT_QUERY } from "@/domain/asset";
 import { polyHavenSearchProvider } from "@/lib/providers/polyhaven/provider";
 import { sketchfabSearchProvider } from "@/lib/providers/sketchfab/provider";
 import { kenneyCatalogSearchProvider } from "@/lib/providers/kenney/provider";
+import { pixabaySearchProvider } from "@/lib/providers/pixabay/provider";
 import { fetchCombinedResults } from "@/lib/search/combined-search";
 import type { ProviderOutcome } from "@/lib/search/aggregate-providers";
 
@@ -13,6 +14,7 @@ const DEFAULT_PROVIDERS: readonly AssetSearchProvider[] = [
   polyHavenSearchProvider,
   sketchfabSearchProvider,
   kenneyCatalogSearchProvider,
+  pixabaySearchProvider,
 ];
 
 interface SettledResult {

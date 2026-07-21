@@ -3,6 +3,7 @@
 import { useAssetSearch } from "@/hooks/useAssetSearch";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useMissingSketchfabFavorites } from "@/hooks/useMissingSketchfabFavorites";
+import { useMissingPixabayFavorites } from "@/hooks/useMissingPixabayFavorites";
 import { AssetGrid } from "@/components/assets/AssetGrid";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
@@ -11,16 +12,18 @@ import { PoweredBySources } from "@/components/layout/PoweredBySources";
 
 export function FavoritesExperience() {
   const { favoriteIds, toggleFavorite } = useFavorites();
-  // Empty query pulls the whole live Poly Haven catalog (already cached by
-  // the provider); we filter down to favorites client-side. Stale ids from an
-  // older dataset simply won't match anything here — they don't break the
-  // page. Sketchfab has no such bulk endpoint, so a favorited Sketchfab asset
-  // is resolved separately, by id (see useMissingSketchfabFavorites).
+  // Empty query pulls the whole live Poly Haven/Kenney catalog (already
+  // cached/bundled); we filter down to favorites client-side. Stale ids from
+  // an older dataset simply won't match anything here — they don't break the
+  // page. Sketchfab and Pixabay have no such bulk endpoint, so a favorited
+  // asset from either is resolved separately, by id.
   const { results, status, error } = useAssetSearch();
   const missingSketchfabAssets = useMissingSketchfabFavorites(favoriteIds, results);
+  const missingPixabayAssets = useMissingPixabayFavorites(favoriteIds, results);
   const favoriteAssets = [
     ...results.filter((asset) => favoriteIds.includes(asset.id)),
     ...missingSketchfabAssets,
+    ...missingPixabayAssets,
   ];
 
   if (status === "loading") return <LoadingState />;

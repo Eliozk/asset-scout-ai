@@ -23,6 +23,7 @@ export const ASSET_SOURCE_IDS = [
   "sketchfab",
   "polyhaven",
   "kenney",
+  "pixabay",
   "fab",
   "itchio",
   "unity-asset-store",
@@ -51,6 +52,11 @@ export const ASSET_SOURCES: Readonly<Record<AssetSourceId, AssetSource>> = {
     id: "kenney",
     label: "Kenney",
     homepageUrl: "https://kenney.nl",
+  },
+  pixabay: {
+    id: "pixabay",
+    label: "Pixabay",
+    homepageUrl: "https://pixabay.com",
   },
   fab: {
     id: "fab",

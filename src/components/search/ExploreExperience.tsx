@@ -16,6 +16,7 @@ import { ProjectChips } from "./ProjectChips";
 import { CategoryToggle } from "./CategoryToggle";
 import { SemanticStatusNote } from "./SemanticStatusNote";
 import { ProviderErrorBanner } from "./ProviderErrorBanner";
+import { applySourceDiversity } from "@/lib/search/source-diversity";
 
 /**
  * Poly Haven's catalog is thousands of assets; an unscoped query can match
@@ -102,7 +103,7 @@ export function ExploreExperience() {
             {status === "success" && semanticallyRanked.length > 0 && (
               <>
                 <AssetGrid
-                  assets={semanticallyRanked.slice(0, RESULT_RENDER_LIMIT)}
+                  assets={applySourceDiversity(semanticallyRanked, RESULT_RENDER_LIMIT)}
                   favoriteIds={favoriteIds}
                   onToggleFavorite={toggleFavorite}
                   semanticScoresById={semanticScoresById}

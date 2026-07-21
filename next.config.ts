@@ -16,6 +16,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "kenney.nl",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.pixabay.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pixabay.com",
+        pathname: "/get/**",
+      },
     ],
   },
 };

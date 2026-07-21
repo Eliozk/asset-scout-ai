@@ -7,6 +7,7 @@ import { rankBySemanticSimilarity } from "@/lib/semantic/ranking";
 import { polyHavenSearchProvider } from "@/lib/providers/polyhaven/provider";
 import { sketchfabSearchProvider } from "@/lib/providers/sketchfab/provider";
 import { kenneyCatalogSearchProvider } from "@/lib/providers/kenney/provider";
+import { pixabaySearchProvider } from "@/lib/providers/pixabay/provider";
 import { fetchCombinedResults } from "@/lib/search/combined-search";
 
 export type SemanticStatus = "loading" | "ready" | "unavailable";
@@ -15,6 +16,7 @@ const DEFAULT_PROVIDERS: readonly AssetSearchProvider[] = [
   polyHavenSearchProvider,
   sketchfabSearchProvider,
   kenneyCatalogSearchProvider,
+  pixabaySearchProvider,
 ];
 
 interface SemanticOutput {
