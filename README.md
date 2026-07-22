@@ -43,7 +43,8 @@ search everywhere.
 - On-device semantic re-ranking with a visible, honest status ("AI Match" vs. deterministic keyword
   relevance — never conflated), and a provider-agnostic hybrid ranker: a strong literal match from a
   non-embedded source can outrank a weak semantic guess instead of always losing to it.
-- Category (2D/3D), pricing, license, engine, format, and style filters; quick "project" context chips.
+- Category (2D/3D), pricing, license, engine, format, and style filters; quick "project" context chips and a dedicated **Free first** sort that preserves relevance within each pricing group.
+- A footer **Send feedback** action that opens a pre-filled GitHub Issue without exposing a personal email address or requiring another backend service.
 - Favorites, persisted locally, resolved back to a live/fresh source lookup whenever a favorited item
   can't be recovered from a plain browse query (e.g. Sketchfab, Pixabay) — plus a floating quick-access
   button with a live saved count.
