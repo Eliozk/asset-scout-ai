@@ -2,15 +2,21 @@
 
 **A federated search platform for discovering game-development assets across multiple providers.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-asset--scout--ai.vercel.app-3b82f6?style=for-the-badge)](https://asset-scout-ai.vercel.app)
-[![GitHub](https://img.shields.io/badge/GitHub-Eliozk%2Fasset--scout--ai-181717?style=for-the-badge&logo=github)](https://github.com/Eliozk/asset-scout-ai)
+## Quick links
+
+[![Open Live Demo](https://img.shields.io/badge/Open%20Live%20Demo-asset--scout--ai.vercel.app-3b82f6?style=for-the-badge)](https://asset-scout-ai.vercel.app)
+<br>
+[![View Source on GitHub](https://img.shields.io/badge/View%20Source%20on%20GitHub-Eliozk%2Fasset--scout--ai-181717?style=for-the-badge&logo=github)](https://github.com/Eliozk/asset-scout-ai)
+
+## Project status
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js)](https://nextjs.org)
+<br>
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+<br>
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com)
+<br>
 [![Tests](https://img.shields.io/badge/tests-396%20passing-22c55e?style=flat-square)](#testing)
-
-**Live site:** https://asset-scout-ai.vercel.app · **Repository:** https://github.com/Eliozk/asset-scout-ai
 
 <img src="docs/screenshots/asset-scout-desktop.webp" alt="AssetScout desktop screenshot — a 'car kit' search returning normalized results from Kenney and Pixabay, each with source, license, and AI-relevance labels" width="100%" />
 
