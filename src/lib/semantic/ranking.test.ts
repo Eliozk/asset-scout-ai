@@ -53,15 +53,39 @@ describe("rankBySemanticSimilarity", () => {
     expect(score).toBeLessThanOrEqual(100);
   });
 
-  it("appends assets with no precomputed embedding after all scored assets, without dropping them", () => {
+  it("never drops an asset with no precomputed embedding, and never gives it a scoresById entry", () => {
     const scored = makeAsset("scored");
     const unscored = makeAsset("unscored");
     const embeddingsById = new Map([["scored", close]]);
 
     const result = rankBySemanticSimilarity([unscored, scored], query, embeddingsById);
-    expect(result.ranked.map((asset) => asset.id)).toEqual(["scored", "unscored"]);
+    expect(new Set(result.ranked.map((a) => a.id))).toEqual(new Set(["scored", "unscored"]));
     expect(result.scoresById.has("unscored")).toBe(false);
     expect(result.scoresById.has("scored")).toBe(true);
+  });
+
+  it("ranks a low-confidence semantic match ahead of an unscored asset with an even lower keyword score", () => {
+    // "close" is ~90% similarity — well above the unscored asset's 20% keyword score.
+    const scored = makeAsset("scored");
+    const unscored = makeAsset("unscored", { matchScore: 20 });
+    const embeddingsById = new Map([["scored", close]]);
+
+    const result = rankBySemanticSimilarity([unscored, scored], query, embeddingsById);
+    expect(result.ranked.map((a) => a.id)).toEqual(["scored", "unscored"]);
+  });
+
+  it("REGRESSION (Milestone 6 'car kit'): a strong literal/keyword match from a non-embedded source outranks a weak semantic guess, instead of always losing to it", () => {
+    // "far" is orthogonal to the query — a genuinely weak ~0% semantic match,
+    // mirroring Poly Haven's real ~33-50% "Covered Car"-style guesses for
+    // "car kit" versus Kenney/Sketchfab's real 80%+ literal "Car Kit" matches.
+    const weakSemanticMatch = makeAsset("polyhaven-weak-guess", { matchScore: 50 });
+    const strongLexicalMatch = makeAsset("kenney-car-kit", { matchScore: 80, source: "kenney" });
+    const embeddingsById = new Map([["polyhaven-weak-guess", far]]);
+
+    const result = rankBySemanticSimilarity([weakSemanticMatch, strongLexicalMatch], query, embeddingsById);
+    expect(result.ranked.map((a) => a.id)).toEqual(["kenney-car-kit", "polyhaven-weak-guess"]);
+    // The unscored strong match must still never be mislabeled as an AI match.
+    expect(result.scoresById.has("kenney-car-kit")).toBe(false);
   });
 
   it("breaks exact score ties deterministically by asset id", () => {

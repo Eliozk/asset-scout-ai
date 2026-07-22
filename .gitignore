@@ -51,3 +51,6 @@ next-env.d.ts
 # Note: the generated ARTIFACT itself (public/semantic-search/) IS committed — only the raw model
 # weights downloaded to produce it are excluded here.
 /.cache/
+
+.vercel
+.env*

@@ -14,6 +14,11 @@ export function Footer() {
           </Link>
           .
         </p>
+        <p className="mt-2">
+          <Link href="/legal" className="focus-ring rounded font-medium text-text-muted underline hover:text-foreground">
+            Privacy &amp; Terms
+          </Link>
+        </p>
       </div>
     </footer>
   );

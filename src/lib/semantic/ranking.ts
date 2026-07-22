@@ -18,10 +18,20 @@ function toDisplayPercent(similarity: number): number {
  * artifact). This never changes WHICH assets are present, only their order
  * and their displayed score.
  *
- * Assets missing a precomputed embedding (e.g. added to the live Poly Haven
- * catalog after the embeddings artifact was generated) keep their existing
- * relative order, appended after every asset that DID get a semantic score
- * — they're never dropped, just not semantically ranked yet.
+ * Assets missing a precomputed embedding (e.g. a Sketchfab/Pixabay/Kenney
+ * result, or a Poly Haven asset added after the embeddings artifact was
+ * generated) are NOT unconditionally placed after every scored asset —
+ * that previously meant a strong literal/keyword match from a
+ * non-embedded source (e.g. an exact "Car Kit" title) always lost to every
+ * Poly Haven asset regardless of how weak its actual semantic similarity
+ * was (see the Milestone 6 "car kit" investigation). Instead, an unscored
+ * asset keeps its own existing deterministic matchScore (already a 0-100
+ * keyword-relevance confidence number, the same scale as the semantic
+ * display percentage) and competes directly on that combined scale — a
+ * confident literal match can and should outrank a low-confidence semantic
+ * guess. Only assets that ARE scored get a scoresById entry (the UI reads
+ * that map, not matchScore, to decide "AI Match" vs "keyword relevance" —
+ * see AssetCard.tsx), so this never mislabels an unscored asset as AI-ranked.
  *
  * Sort is stable and fully deterministic: ties break on asset id so output
  * ordering never depends on incidental array/traversal order.
@@ -31,27 +41,24 @@ export function rankBySemanticSimilarity(
   queryEmbedding: Float32Array,
   embeddingsById: ReadonlyMap<string, Float32Array>,
 ): SemanticRankingResult {
-  const scored: { asset: AssetSearchResult; rawScore: number }[] = [];
-  const unscored: AssetSearchResult[] = [];
+  const scoresById = new Map<string, number>();
+  const combined: { asset: AssetSearchResult; displayScore: number }[] = [];
 
   for (const asset of assets) {
     const embedding = embeddingsById.get(asset.id);
     if (embedding) {
-      scored.push({ asset, rawScore: cosineSimilarity(queryEmbedding, embedding) });
+      const displayScore = toDisplayPercent(cosineSimilarity(queryEmbedding, embedding));
+      scoresById.set(asset.id, displayScore);
+      combined.push({ asset, displayScore });
     } else {
-      unscored.push(asset);
+      combined.push({ asset, displayScore: asset.matchScore });
     }
   }
 
-  scored.sort((a, b) => b.rawScore - a.rawScore || a.asset.id.localeCompare(b.asset.id));
-
-  const scoresById = new Map<string, number>();
-  for (const { asset, rawScore } of scored) {
-    scoresById.set(asset.id, toDisplayPercent(rawScore));
-  }
+  combined.sort((a, b) => b.displayScore - a.displayScore || a.asset.id.localeCompare(b.asset.id));
 
   return {
-    ranked: [...scored.map((entry) => entry.asset), ...unscored],
+    ranked: combined.map((entry) => entry.asset),
     scoresById,
   };
 }
