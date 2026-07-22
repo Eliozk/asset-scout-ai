@@ -42,6 +42,6 @@ export function tokenizeSearchText(text: string): string[] {
     .trim()
     .toLowerCase()
     .split(/\s+/)
-    .map((token) => token.replace(/^[^\w-]+|[^\w-]+$/g, ""))
+    .map((token) => token.replace(/^[^\p{L}\p{N}_-]+|[^\p{L}\p{N}_-]+$/gu, ""))
     .filter((token) => token.length > 1 && !STOPWORDS.has(token));
 }

@@ -27,15 +27,19 @@ export function AssetPreview({ asset }: AssetPreviewProps) {
 
   return (
     <div
-      className={`relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-t-xl bg-gradient-to-br ${gradient}`}
+      className={`relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-t-xl bg-gradient-to-br ${gradient} p-5`}
     >
       {showImage ? (
+        // No `fill`: an intrinsic width/height lets the image lay out at its own
+        // natural size (via h-auto/w-auto), only ever shrinking to fit the padded
+        // box (max-h-full/max-w-full) — never upscaling a low-res thumbnail to
+        // fill the card. object-contain guarantees no distortion either way.
         <Image
           src={asset.thumbnailUrl!}
           alt={`${asset.name} preview thumbnail`}
-          fill
-          sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover"
+          width={640}
+          height={480}
+          className="h-auto max-h-full w-auto max-w-full object-contain"
           onError={() => setImageFailed(true)}
         />
       ) : (

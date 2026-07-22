@@ -154,4 +154,9 @@ describe("filterAssets", () => {
     const result = filterAssets(assets, makeQuery({ text: "low-poly" }));
     expect(result.map((a) => a.id)).toEqual(["dragon"]);
   });
+
+  it("does not match the entire catalog for a non-Latin-script query with no matching English metadata (regression: Hebrew query previously collapsed to zero terms and matched everything)", () => {
+    const result = filterAssets(assets, makeQuery({ text: "כיסא עץ ישן" }));
+    expect(result).toEqual([]);
+  });
 });

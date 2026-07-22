@@ -35,4 +35,17 @@ describe("tokenizeSearchText", () => {
   it("lowercases input", () => {
     expect(tokenizeSearchText("Dragon URP Mobile")).toEqual(["dragon", "urp", "mobile"]);
   });
+
+  it("preserves Hebrew tokens instead of stripping them to nothing (regression: non-Latin scripts must not collapse to an empty term list)", () => {
+    expect(tokenizeSearchText("חרב")).toEqual(["חרב"]);
+    expect(tokenizeSearchText("כיסא עץ ישן")).toEqual(["כיסא", "עץ", "ישן"]);
+  });
+
+  it("preserves accented Latin characters", () => {
+    expect(tokenizeSearchText("naïve café")).toEqual(["naïve", "café"]);
+  });
+
+  it("still strips real ASCII punctuation surrounding non-Latin words", () => {
+    expect(tokenizeSearchText('"חרב" (מימי הביניים)!')).toEqual(["חרב", "מימי", "הביניים"]);
+  });
 });

@@ -16,8 +16,10 @@ import { ProjectChips } from "./ProjectChips";
 import { CategoryToggle } from "./CategoryToggle";
 import { SemanticStatusNote } from "./SemanticStatusNote";
 import { ProviderErrorBanner } from "./ProviderErrorBanner";
+import { LanguageLimitationNotice } from "./LanguageLimitationNotice";
 import { MarketplaceSearchHub } from "./MarketplaceSearchHub";
 import { applySourceDiversity } from "@/lib/search/source-diversity";
+import { containsUnsupportedScript } from "@/lib/search/query-language";
 
 /**
  * Poly Haven's catalog is thousands of assets; an unscoped query can match
@@ -35,6 +37,11 @@ export function ExploreExperience() {
     ranked: semanticallyRanked,
     scoresById: semanticScoresById,
   } = useSemanticRanking(query, results);
+  const unsupportedLanguage = containsUnsupportedScript(query.text);
+  // Mirrors useSemanticRanking's own internal `canRank` condition: whenever AI
+  // ranking is active, `semanticallyRanked` is the FULL catalog re-sorted by
+  // relevance (not a filtered match count) — see that hook's doc comment.
+  const aiRanked = semanticStatus === "ready" && query.sort === "best-match" && query.text.trim() !== "";
 
   function setCategory(category: AssetCategory | "all") {
     setQuery((current) => ({ ...current, category }));
@@ -85,11 +92,12 @@ export function ExploreExperience() {
             />
           </div>
 
-          {status !== "error" && (
+          {status !== "error" && !(status === "success" && unsupportedLanguage) && (
             <ResultsHeader
               count={semanticallyRanked.length}
               sort={query.sort}
               onSortChange={(sort) => setQuery((current) => ({ ...current, sort }))}
+              aiRanked={aiRanked}
             />
           )}
 
@@ -100,8 +108,26 @@ export function ExploreExperience() {
             {status === "error" && (
               <ErrorState message={error ?? "Search is unavailable right now. Please try again shortly."} />
             )}
-            {status === "success" && semanticallyRanked.length === 0 && <EmptyState />}
-            {status === "success" && semanticallyRanked.length > 0 && (
+            {/*
+              Unsupported-script queries are handled before the normal empty/results
+              branches, and take priority even in AI-ranked mode — that mode re-sorts
+              the ENTIRE catalog when the keyword filter would zero out (see
+              useSemanticRanking), which would otherwise flood a Hebrew/Arabic/etc.
+              query with thousands of items "ranked" by a model that (per the
+              multilingual POC in poc/multilingual-hebrew-search/) has no real
+              cross-lingual signal for the production English-only model.
+            */}
+            {status === "success" && unsupportedLanguage && (
+              <>
+                <LanguageLimitationNotice />
+                <EmptyState
+                  title="No English matches for this query"
+                  description="AssetScout's catalog text and search only understand English right now. Try describing the asset in English (e.g. 'medieval sword' instead of 'חרב')."
+                />
+              </>
+            )}
+            {status === "success" && !unsupportedLanguage && semanticallyRanked.length === 0 && <EmptyState />}
+            {status === "success" && !unsupportedLanguage && semanticallyRanked.length > 0 && (
               <>
                 <AssetGrid
                   assets={applySourceDiversity(semanticallyRanked, RESULT_RENDER_LIMIT)}
@@ -111,8 +137,9 @@ export function ExploreExperience() {
                 />
                 {semanticallyRanked.length > RESULT_RENDER_LIMIT && (
                   <p className="mt-6 text-center text-xs text-text-faint">
-                    Showing the top {RESULT_RENDER_LIMIT} of {semanticallyRanked.length} matches — refine your
-                    search or filters to narrow further.
+                    {aiRanked
+                      ? `Showing the ${RESULT_RENDER_LIMIT} most AI-relevant of ${semanticallyRanked.length} catalog items — refine your search or filters to narrow further.`
+                      : `Showing the top ${RESULT_RENDER_LIMIT} of ${semanticallyRanked.length} matches — refine your search or filters to narrow further.`}
                   </p>
                 )}
               </>
