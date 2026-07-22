@@ -16,7 +16,7 @@
 <br>
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com)
 <br>
-[![Tests](https://img.shields.io/badge/tests-396%20passing-22c55e?style=flat-square)](#testing)
+[![Tests](https://img.shields.io/badge/tests-397%20passing-22c55e?style=flat-square)](#testing)
 
 <img src="docs/screenshots/asset-scout-desktop.webp" alt="AssetScout desktop screenshot — a 'car kit' search returning normalized results from Kenney and Pixabay, each with source, license, and AI-relevance labels" width="100%" />
 
@@ -169,7 +169,8 @@ test. Refresh both together with `npm run catalog:refresh`.
   deliberately not added — the local model download (Hugging Face's CDN, multiple/rotating hosts)
   isn't fully enumerable without live testing every host, and an under-tested CSP risks silently
   breaking model loading, remote images, or the external marketplace links.
-- No user accounts, no payment processing, no tracking cookies or analytics.
+- No user accounts, payment processing, advertising scripts, or tracking cookies. Anonymous,
+  cookie-free traffic statistics are collected with Vercel Web Analytics.
 - See [`/legal`](https://asset-scout-ai.vercel.app/legal) for the full privacy/terms notice — it
   makes no guarantee of permanent zero cost or blanket legal compliance in every jurisdiction, and
   says so directly.
@@ -218,7 +219,7 @@ gitignored).
 
 ```bash
 npm run lint     # ESLint (eslint-config-next) — passing
-npm run test     # Vitest — 396 automated tests passing
+npm run test     # Vitest — 397 automated tests passing
 npm run build    # Production build (Turbopack) — verified
 npm run start    # Serve the production build locally
 ```

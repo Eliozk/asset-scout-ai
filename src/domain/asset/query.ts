@@ -23,6 +23,7 @@ export interface AssetFilters {
 
 export const SORT_OPTIONS = [
   "best-match",
+  "free-first",
   "price-asc",
   "price-desc",
   "name-asc",
@@ -31,6 +32,7 @@ export type SortOption = (typeof SORT_OPTIONS)[number];
 
 export const SORT_OPTION_LABELS: Readonly<Record<SortOption, string>> = {
   "best-match": "Best match",
+  "free-first": "Free first",
   "price-asc": "Price: Low to High",
   "price-desc": "Price: High to Low",
   "name-asc": "Name: A to Z",

@@ -38,6 +38,16 @@ describe("sortAssets", () => {
     expect(sortAssets(assets, "price-asc").map((a) => a.id)).toEqual(["free", "cheap", "expensive"]);
   });
 
+  it("puts free assets first while preserving relevance within pricing groups", () => {
+    const anotherFree = makeAsset({ id: "another-free", matchScore: 40, pricing: { model: "free" } });
+    expect(sortAssets([cheap, anotherFree, expensive, free], "free-first").map((a) => a.id)).toEqual([
+      "free",
+      "another-free",
+      "expensive",
+      "cheap",
+    ]);
+  });
+
   it("sorts by price descending", () => {
     expect(sortAssets(assets, "price-desc").map((a) => a.id)).toEqual(["expensive", "cheap", "free"]);
   });

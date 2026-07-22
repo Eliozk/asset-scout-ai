@@ -68,8 +68,11 @@ export default function LegalPage() {
           (see &quot;Local AI, not cloud AI&quot; below).
         </p>
         <p>
-          AssetScout AI does not currently run analytics, advertising scripts, or non-essential
-          tracking cookies, and does not itself build a profile of visitors. That said, request
+          AssetScout AI uses Vercel Web Analytics to collect anonymous, aggregate usage information,
+          such as page views, referrers, approximate country, device, and browser type. Vercel Web
+          Analytics does not use cookies and is not used here to identify individual visitors or build
+          personal profiles. AssetScout AI does not run advertising scripts or non-essential tracking
+          cookies. That said, request
           processing is not limited to this project&apos;s own code: Vercel (the hosting provider) and
           the upstream providers a query is forwarded to necessarily process standard web request data —
           things like IP address, user-agent, request contents, and operational logs — under their own

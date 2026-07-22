@@ -14,6 +14,12 @@ export function sortAssets(
   const sorted = [...assets];
 
   switch (sort) {
+    case "free-first":
+      return sorted.sort((a, b) => {
+        const pricingDifference =
+          Number(a.pricing.model !== "free") - Number(b.pricing.model !== "free");
+        return pricingDifference || b.matchScore - a.matchScore;
+      });
     case "price-asc":
       return sorted.sort((a, b) => priceValue(a) - priceValue(b));
     case "price-desc":
