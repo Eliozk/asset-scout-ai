@@ -1,10 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  fetchPolyHavenCatalog,
-  parseAndNormalizeCatalog,
-  PolyHavenUpstreamError,
-  resetPolyHavenCatalogCacheForTests,
-} from "./fetch-assets";
+import { createPolyHavenCatalogLoader, parseAndNormalizeCatalog, PolyHavenUpstreamError } from "./fetch-assets";
 import {
   HDRI_FIXTURE,
   MALFORMED_MISSING_THUMBNAIL,
@@ -54,9 +49,35 @@ function jsonResponse(body: unknown): Response {
   return new Response(JSON.stringify(body), { status: 200 });
 }
 
-describe("fetchPolyHavenCatalog caching", () => {
+describe("createPolyHavenCatalogLoader: static-catalog-preferred", () => {
+  it("returns the given static catalog directly and never touches the network", async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal("fetch", fetchSpy);
+
+    const staticAsset = parseAndNormalizeCatalog({ good_hdri: HDRI_FIXTURE }).assets;
+    const { fetchCatalog } = createPolyHavenCatalogLoader(staticAsset, {
+      sourceUrl: "https://api.polyhaven.com/assets",
+      generatedAt: "2026-01-01T00:00:00.000Z",
+      catalogVersion: "abc123",
+      count: staticAsset.length,
+      totalUpstream: 5,
+      skipped: 1,
+      license: "CC0",
+    });
+
+    const result = await fetchCatalog();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result.assets).toEqual(staticAsset);
+    expect(result.totalUpstream).toBe(5);
+    expect(result.skipped).toBe(1);
+
+    vi.unstubAllGlobals();
+  });
+});
+
+describe("createPolyHavenCatalogLoader: live-fetch fallback (empty static catalog)", () => {
   beforeEach(() => {
-    resetPolyHavenCatalogCacheForTests();
     // Only fake Date — the cache's TTL check reads Date.now(), but leaving
     // setTimeout/AbortSignal.timeout's real scheduling alone avoids any
     // interaction with the real network-timeout logic in fetchFreshCatalog.
@@ -66,14 +87,14 @@ describe("fetchPolyHavenCatalog caching", () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
-    resetPolyHavenCatalogCacheForTests();
   });
 
   it("never passes Next's fetch Data Cache options — the ~3MB catalog response is over its 2MB per-entry limit", async () => {
     const fetchSpy = vi.fn().mockResolvedValue(jsonResponse({ good_hdri: HDRI_FIXTURE }));
     vi.stubGlobal("fetch", fetchSpy);
+    const { fetchCatalog } = createPolyHavenCatalogLoader([], null);
 
-    await fetchPolyHavenCatalog();
+    await fetchCatalog();
 
     const [, init] = fetchSpy.mock.calls[0];
     expect(init).not.toHaveProperty("next");
@@ -82,9 +103,10 @@ describe("fetchPolyHavenCatalog caching", () => {
   it("serves a repeat call from the in-memory cache without hitting the network again", async () => {
     const fetchSpy = vi.fn().mockResolvedValue(jsonResponse({ good_hdri: HDRI_FIXTURE }));
     vi.stubGlobal("fetch", fetchSpy);
+    const { fetchCatalog } = createPolyHavenCatalogLoader([], null);
 
-    const first = await fetchPolyHavenCatalog();
-    const second = await fetchPolyHavenCatalog();
+    const first = await fetchCatalog();
+    const second = await fetchCatalog();
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(second).toEqual(first);
@@ -92,13 +114,14 @@ describe("fetchPolyHavenCatalog caching", () => {
 
   it("re-fetches once the ~6h cache window has elapsed", async () => {
     // A fresh Response per call — a Response body can only be read once, and
-    // this test calls fetchPolyHavenCatalog() (and so .json()) twice.
+    // this test calls fetchCatalog() (and so .json()) twice.
     const fetchSpy = vi.fn().mockImplementation(() => jsonResponse({ good_hdri: HDRI_FIXTURE }));
     vi.stubGlobal("fetch", fetchSpy);
+    const { fetchCatalog } = createPolyHavenCatalogLoader([], null);
 
-    await fetchPolyHavenCatalog();
+    await fetchCatalog();
     vi.advanceTimersByTime(6 * 60 * 60 * 1000 + 1);
-    await fetchPolyHavenCatalog();
+    await fetchCatalog();
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
@@ -110,9 +133,10 @@ describe("fetchPolyHavenCatalog caching", () => {
     });
     const fetchSpy = vi.fn().mockReturnValue(pendingFetch);
     vi.stubGlobal("fetch", fetchSpy);
+    const { fetchCatalog } = createPolyHavenCatalogLoader([], null);
 
-    const callA = fetchPolyHavenCatalog();
-    const callB = fetchPolyHavenCatalog();
+    const callA = fetchCatalog();
+    const callB = fetchCatalog();
     resolveFetch!(jsonResponse({ good_hdri: HDRI_FIXTURE }));
 
     const [resultA, resultB] = await Promise.all([callA, callB]);
@@ -127,9 +151,10 @@ describe("fetchPolyHavenCatalog caching", () => {
       .mockResolvedValueOnce(new Response("", { status: 500 }))
       .mockResolvedValueOnce(jsonResponse({ good_hdri: HDRI_FIXTURE }));
     vi.stubGlobal("fetch", fetchSpy);
+    const { fetchCatalog } = createPolyHavenCatalogLoader([], null);
 
-    await expect(fetchPolyHavenCatalog()).rejects.toThrow(PolyHavenUpstreamError);
-    const result = await fetchPolyHavenCatalog();
+    await expect(fetchCatalog()).rejects.toThrow(PolyHavenUpstreamError);
+    const result = await fetchCatalog();
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     expect(result.assets).toHaveLength(1);

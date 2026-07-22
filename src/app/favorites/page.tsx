@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { FavoritesExperience } from "@/components/search/FavoritesExperience";
 
 export const metadata: Metadata = {
-  title: "Favorites — AssetScout AI",
+  title: "Favorites",
+  description: "Assets you've saved for your project, stored locally in your browser.",
+  alternates: { canonical: "/favorites" },
+  robots: { index: false, follow: true }, // per-visitor localStorage content — nothing useful to index
 };
 
 export default function FavoritesPage() {

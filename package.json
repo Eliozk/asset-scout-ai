@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test": "vitest run",
     "embeddings:generate": "tsx scripts/generate-embeddings.mts",
-    "kenney:generate": "tsx scripts/generate-kenney-catalog.mts"
+    "kenney:generate": "tsx scripts/generate-kenney-catalog.mts",
+    "polyhaven:generate": "tsx scripts/generate-polyhaven-catalog.mts",
+    "catalog:refresh": "npm run polyhaven:generate && npm run embeddings:generate"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",

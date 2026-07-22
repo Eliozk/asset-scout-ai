@@ -4,8 +4,9 @@ import { AUTHORIZED_INDEXED_CATALOG_SOURCES, LIVE_API_SOURCES } from "@/lib/sour
 import { EXTERNAL_MARKETPLACES } from "@/lib/marketplaces/registry";
 
 export const metadata: Metadata = {
-  title: "Sources — AssetScout AI",
+  title: "Sources",
   description: "Every data source AssetScout connects to or links out to, and exactly what that connection means.",
+  alternates: { canonical: "/sources" },
 };
 
 function SourceCard({

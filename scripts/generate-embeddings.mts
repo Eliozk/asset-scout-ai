@@ -1,11 +1,17 @@
 /**
- * Milestone 3 Phase 1: generates the full-catalog embeddings artifact
- * shipped to the browser as static files. Run manually with:
+ * Milestone 3 Phase 1 (updated Milestone 5 Phase 2): generates the
+ * full-catalog embeddings artifact shipped to the browser as static files.
+ * Run manually with:
  *
  *   npm run embeddings:generate
  *
- * Not part of `next build` — regenerate deliberately when the live Poly
- * Haven catalog changes materially. Writes:
+ * Not part of `next build` — regenerate deliberately (see README's "Catalog
+ * & embeddings refresh" section, and run `npm run polyhaven:generate` FIRST
+ * if the catalog itself needs refreshing too). Reads the already-committed
+ * src/data/polyhaven-catalog/catalog.json — it does NOT fetch Poly Haven
+ * live itself, so the embeddings manifest's catalogVersion always matches
+ * exactly what's in that file; the two artifacts can never independently
+ * drift out of sync with each other. Writes:
  *   - public/semantic-search/embeddings.bin   (Float32Array, row-major, one row per asset)
  *   - public/semantic-search/manifest.json    (model id, dimensions, catalog version, ordered asset ids)
  */
@@ -13,10 +19,11 @@ import { env, pipeline } from "@huggingface/transformers";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { fetchPolyHavenCatalog } from "@/lib/providers/polyhaven/fetch-assets";
 import { buildEmbeddingText } from "@/lib/semantic/embedding-text";
 import { computeCatalogVersion } from "@/lib/semantic/catalog-version";
+import { validatePolyHavenCatalog } from "@/lib/providers/polyhaven/catalog-schema";
 import type { SemanticManifest } from "@/lib/semantic/manifest";
+import rawPolyHavenCatalog from "@/data/polyhaven-catalog/catalog.json";
 
 const MODEL_ID = "Xenova/all-MiniLM-L6-v2";
 const EXPECTED_DIMENSIONS = 384;
@@ -36,11 +43,18 @@ function formatMs(ms: number): string {
 async function main() {
   const start = performance.now();
 
-  console.log("Fetching live Poly Haven catalog...");
-  const { assets, totalUpstream, skipped } = await fetchPolyHavenCatalog();
-  console.log(`Fetched ${assets.length} normalized assets (of ${totalUpstream} upstream, ${skipped} skipped).`);
+  console.log("Reading committed Poly Haven catalog (src/data/polyhaven-catalog/catalog.json)...");
+  const assets = validatePolyHavenCatalog(rawPolyHavenCatalog);
+  if (assets.length === 0) {
+    throw new Error(
+      "src/data/polyhaven-catalog/catalog.json is missing or empty — run `npm run polyhaven:generate` first.",
+    );
+  }
+  console.log(`Read ${assets.length} normalized assets from the committed catalog.`);
 
-  // Stable, deterministic ordering independent of upstream dict iteration order.
+  // Same sort scripts/generate-polyhaven-catalog.mts already applied when it
+  // wrote this file — re-sorting here is a no-op for a well-formed catalog,
+  // and a safety net if the file was ever hand-edited out of order.
   const sortedAssets = [...assets].sort((a, b) => a.id.localeCompare(b.id));
 
   console.log(`Loading model "${MODEL_ID}" (dtype: q8)...`);
