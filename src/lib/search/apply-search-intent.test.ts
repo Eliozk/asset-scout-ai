@@ -36,11 +36,15 @@ describe("applySearchIntent", () => {
     expect(result.category).toBe("2D");
   });
 
-  it("fills empty filter arrays (assetType, engine, style) from the intent", () => {
+  it("fills empty filter arrays (assetType, style) from the intent", () => {
     const result = applySearchIntent(DEFAULT_QUERY, makeIntent());
     expect(result.filters.assetType).toEqual(["Weapon"]);
-    expect(result.filters.engine).toEqual(["Unity"]);
     expect(result.filters.style).toEqual(["Realistic"]);
+  });
+
+  it("regression: never applies intent.engines to filters.engine, even when the filter is empty — found live: every current provider normalizes to 'Engine-agnostic', so an engine-specific filter (e.g. Gemini inferring 'Unity' from '...for a Unity mobile game') can only ever zero out real results, never narrow them usefully", () => {
+    const result = applySearchIntent(DEFAULT_QUERY, makeIntent({ engines: ["Unity"] }));
+    expect(result.filters.engine).toEqual([]);
   });
 
   it("never overrides an already-explicit filter array", () => {
@@ -71,21 +75,20 @@ describe("applySearchIntent", () => {
     expect(result.filters.pricing).toBe("paid");
   });
 
-  it("fills empty contextTags from platforms", () => {
+  it("regression: never applies intent.platforms to contextTags, even when contextTags is empty — found live: matchesContextTags requires the literal tag on the asset, and real provider tags (verified: a Sketchfab 'Police Car' result's own tags) never include a generic platform word like 'mobile', so Gemini inferring platforms: ['mobile'] from '...for a Unity mobile game' reproduced the same 0-result failure as the engine filter", () => {
     const result = applySearchIntent(DEFAULT_QUERY, makeIntent({ platforms: ["mobile"] }));
-    expect(result.contextTags).toEqual(["mobile"]);
+    expect(result.contextTags).toEqual([]);
   });
 
-  it("never overrides already-present contextTags", () => {
+  it("leaves already-present contextTags untouched regardless of platforms", () => {
     const explicit: AssetSearchQuery = { ...DEFAULT_QUERY, contextTags: ["unity"] };
     const result = applySearchIntent(explicit, makeIntent({ platforms: ["mobile"] }));
     expect(result.contextTags).toEqual(["unity"]);
   });
 
   it("leaves an empty intent field as the existing empty default rather than setting an empty array explicitly", () => {
-    const result = applySearchIntent(DEFAULT_QUERY, makeIntent({ assetTypes: [], engines: [], styles: [] }));
+    const result = applySearchIntent(DEFAULT_QUERY, makeIntent({ assetTypes: [], styles: [] }));
     expect(result.filters.assetType).toEqual([]);
-    expect(result.filters.engine).toEqual([]);
     expect(result.filters.style).toEqual([]);
   });
 

@@ -21,6 +21,31 @@ import type { SearchIntent } from "@/domain/search-intent";
  * domain model has no separate "touched" flag, so this function can't tell
  * them apart and will fill it from Gemini's dimension in both cases. This is
  * a deliberate, documented tradeoff, not an oversight.
+ *
+ * `intent.engines` is deliberately NEVER applied to `filters.engine`. Every
+ * current live/normalized provider (src/lib/providers/*\/normalize.ts) sets
+ * `engines: ["Engine-agnostic"]` unconditionally — none populates a real
+ * per-asset "Unity"/"Unreal"/"Godot" value — and the engine filter
+ * (lib/search/filter.ts's matchesAnyOf) requires an exact literal match, so
+ * an engine-specific filter can currently only ever zero out the entire
+ * catalog, never narrow it usefully. This was found live: Gemini correctly
+ * inferred engines: ["Unity"] from "...for a Unity mobile game" for both the
+ * English and Hebrew test queries, and applying it produced 0 results for
+ * an otherwise perfectly reasonable search. Revisit this once a provider
+ * populates real engine-compatibility data.
+ *
+ * `intent.platforms` is, for the identical reason, deliberately NEVER
+ * applied to `contextTags`. `matchesContextTags` (lib/search/filter.ts)
+ * requires every context tag to literally appear in `asset.tags` — a real
+ * requirement the ProjectChips quick-filter UI satisfies on purpose (its
+ * "Unity"/"URP"/"Mobile" chips push the literal strings "unity"/"urp"/
+ * "mobile"), but real provider tag data (verified live: a Sketchfab "Police
+ * Car" result's own tags — "police", "vehicle", "lowpoly", "cop", "old",
+ * etc. — never include a generic platform word like "mobile") essentially
+ * never contains it. Gemini inferring platforms: ["mobile"] from "...for a
+ * Unity mobile game" and applying it as a required tag reproduced the exact
+ * same 0-result failure as the engine filter did, live, for both the
+ * English and Hebrew test queries.
  */
 export function applySearchIntent(query: AssetSearchQuery, intent: SearchIntent): AssetSearchQuery {
   const filters = query.filters;
@@ -29,24 +54,18 @@ export function applySearchIntent(query: AssetSearchQuery, intent: SearchIntent)
 
   const nextAssetType = filters.assetType.length === 0 && intent.assetTypes.length > 0 ? intent.assetTypes : filters.assetType;
 
-  const nextEngine = filters.engine.length === 0 && intent.engines.length > 0 ? intent.engines : filters.engine;
-
   const nextStyle = filters.style.length === 0 && intent.styles.length > 0 ? intent.styles : filters.style;
 
   const nextPricing =
     filters.pricing === "all" && intent.freeOnly !== null ? (intent.freeOnly ? "free" : "paid") : filters.pricing;
 
-  const nextContextTags = query.contextTags.length === 0 && intent.platforms.length > 0 ? intent.platforms : query.contextTags;
-
   return {
     ...query,
     text: intent.normalizedQuery,
     category: nextCategory,
-    contextTags: nextContextTags,
     filters: {
       ...filters,
       assetType: nextAssetType,
-      engine: nextEngine,
       style: nextStyle,
       pricing: nextPricing,
     },

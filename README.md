@@ -16,7 +16,7 @@
 <br>
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com)
 <br>
-[![Tests](https://img.shields.io/badge/tests-549%20passing-22c55e?style=flat-square)](#testing)
+[![Tests](https://img.shields.io/badge/tests-550%20passing-22c55e?style=flat-square)](#testing)
 
 <img src="docs/screenshots/asset-scout-desktop.webp" alt="AssetScout desktop screenshot — a 'car kit' search returning normalized results from Kenney and Pixabay, each with source, license, and AI-relevance labels" width="100%" />
 
@@ -293,7 +293,7 @@ their search runs fully unauthenticated/anonymously, same as Sketchfab's default
 
 ```bash
 npm run lint     # ESLint (eslint-config-next) — passing
-npm run test     # Vitest — 549 automated tests passing
+npm run test     # Vitest — 550 automated tests passing
 npm run build    # Production build (Turbopack) — verified
 npm run start    # Serve the production build locally
 ```
