@@ -16,7 +16,7 @@
 <br>
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com)
 <br>
-[![Tests](https://img.shields.io/badge/tests-548%20passing-22c55e?style=flat-square)](#testing)
+[![Tests](https://img.shields.io/badge/tests-549%20passing-22c55e?style=flat-square)](#testing)
 
 <img src="docs/screenshots/asset-scout-desktop.webp" alt="AssetScout desktop screenshot — a 'car kit' search returning normalized results from Kenney and Pixabay, each with source, license, and AI-relevance labels" width="100%" />
 
@@ -283,7 +283,7 @@ gitignored).
 | `PIXABAY_API_KEY` | Yes, for Pixabay results | Free key from [pixabay.com/api/docs](https://pixabay.com/api/docs/). Read server-side only; omitting it just omits Pixabay from results — everything else still works. |
 | `SKETCHFAB_API_TOKEN` | No | Sketchfab's search works fully unauthenticated. An optional free token raises your own rate limit. |
 | `GEMINI_API_KEY` | No | Enables Gemini query understanding. Free key from [Google AI Studio](https://aistudio.google.com/apikey) — no billing account needed. Omitting it just runs local search exactly as before; every Gemini failure mode falls back the same way. Read server-side only, never sent to the browser. |
-| `GEMINI_MODEL` | No | Overrides the Gemini model (defaults to `gemini-2.5-flash-lite` — current stable, free-tier, structured-output-capable). |
+| `GEMINI_MODEL` | No | Overrides the Gemini model (defaults to `gemini-3.1-flash-lite` — current stable, free-tier, structured-output-capable, confirmed via a live request). |
 | `NEXT_PUBLIC_SITE_URL` | No | This app's own public URL, used for canonical links/sitemap/OG metadata. Falls back to `http://localhost:3000`. |
 
 ambientCG, Wikimedia Commons, NASA Image Library, and Openverse need no environment variable at all —
@@ -293,7 +293,7 @@ their search runs fully unauthenticated/anonymously, same as Sketchfab's default
 
 ```bash
 npm run lint     # ESLint (eslint-config-next) — passing
-npm run test     # Vitest — 548 automated tests passing
+npm run test     # Vitest — 549 automated tests passing
 npm run build    # Production build (Turbopack) — verified
 npm run start    # Serve the production build locally
 ```

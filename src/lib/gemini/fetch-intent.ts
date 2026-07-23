@@ -25,8 +25,21 @@ export type GeminiIntentResult =
   | { readonly ok: true; readonly intent: SearchIntent }
   | { readonly ok: false; readonly reason: GeminiUnavailableReason };
 
-/** Default: current stable Gemini Developer API model confirmed to support both the free tier and structured JSON output (ai.google.dev/gemini-api/docs/models, ai.google.dev/gemini-api/docs/pricing). Configurable via GEMINI_MODEL. */
-const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+/**
+ * Default: current stable Gemini Developer API model confirmed to support
+ * both the free tier and structured JSON output. Configurable via
+ * GEMINI_MODEL.
+ *
+ * Was "gemini-2.5-flash-lite" until a live request against a real API key
+ * returned a 404: "This model models/gemini-2.5-flash-lite is no longer
+ * available to new users." A follow-up live check showed the entire Gemini
+ * 2.5 generation (including plain gemini-2.5-flash) 404s the same way for a
+ * new key/account, while gemini-3.1-flash-lite and gemini-3.5-flash-lite
+ * both succeeded, including with responseSchema structured output — verified
+ * directly against the real API, not just the (stale) models docs page,
+ * which still listed 2.5-flash-lite as available.
+ */
+const DEFAULT_MODEL = "gemini-3.1-flash-lite";
 
 /** Deliberately short — this sits inside a synchronous search flow; a slow Gemini call must not make the whole page feel broken. */
 const REQUEST_TIMEOUT_MS = 6_000;

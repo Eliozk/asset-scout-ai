@@ -122,15 +122,23 @@ describe("fetchSearchIntentFromGemini", () => {
     mockGenerateContent.mockResolvedValue({ text: JSON.stringify(VALID_RAW_INTENT) });
     await fetchSearchIntentFromGemini("sword");
     const [args] = mockGenerateContent.mock.calls[0];
-    expect(args.model).toBe("gemini-2.5-flash-lite");
+    expect(args.model).toBe("gemini-3.1-flash-lite");
   });
 
-  it("uses GEMINI_MODEL when explicitly configured", async () => {
-    process.env.GEMINI_MODEL = "gemini-3.1-flash-lite";
+  it("regression: never silently reverts to gemini-2.5-flash-lite, confirmed live (2026-07) to 404 for a new API key/account with 'no longer available to new users'", async () => {
     mockGenerateContent.mockResolvedValue({ text: JSON.stringify(VALID_RAW_INTENT) });
     await fetchSearchIntentFromGemini("sword");
     const [args] = mockGenerateContent.mock.calls[0];
-    expect(args.model).toBe("gemini-3.1-flash-lite");
+    expect(args.model).not.toBe("gemini-2.5-flash-lite");
+    expect(args.model).not.toBe("gemini-2.5-flash");
+  });
+
+  it("uses GEMINI_MODEL when explicitly configured, overriding the default", async () => {
+    process.env.GEMINI_MODEL = "gemini-3.5-flash-lite";
+    mockGenerateContent.mockResolvedValue({ text: JSON.stringify(VALID_RAW_INTENT) });
+    await fetchSearchIntentFromGemini("sword");
+    const [args] = mockGenerateContent.mock.calls[0];
+    expect(args.model).toBe("gemini-3.5-flash-lite");
   });
 
   it("requests structured JSON output via responseMimeType + responseSchema", async () => {
