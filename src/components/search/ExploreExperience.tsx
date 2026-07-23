@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import type { AssetCategory } from "@/domain/asset";
 import { useAssetSearch } from "@/hooks/useAssetSearch";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useSemanticRanking } from "@/hooks/useSemanticRanking";
+import { useQueryUnderstanding } from "@/hooks/useQueryUnderstanding";
 import { FilterSidebar } from "@/components/filters/FilterSidebar";
 import { FilterDrawer } from "@/components/filters/FilterDrawer";
 import { AssetGrid } from "@/components/assets/AssetGrid";
@@ -15,10 +17,12 @@ import { SearchBar } from "./SearchBar";
 import { ProjectChips } from "./ProjectChips";
 import { CategoryToggle } from "./CategoryToggle";
 import { SemanticStatusNote } from "./SemanticStatusNote";
+import { GeminiStatusNote } from "./GeminiStatusNote";
 import { ProviderErrorBanner } from "./ProviderErrorBanner";
 import { LanguageLimitationNotice } from "./LanguageLimitationNotice";
 import { MarketplaceSearchHub } from "./MarketplaceSearchHub";
 import { applySourceDiversity } from "@/lib/search/source-diversity";
+import { applySearchIntent } from "@/lib/search/apply-search-intent";
 import { containsUnsupportedScript } from "@/lib/search/query-language";
 
 /**
@@ -37,6 +41,13 @@ export function ExploreExperience() {
     ranked: semanticallyRanked,
     scoresById: semanticScoresById,
   } = useSemanticRanking(query, results);
+  const { status: geminiStatus, submit: submitToGemini } = useQueryUnderstanding();
+  // What's actually shown in the search box — always the user's own typed
+  // text, even after a successful Gemini interpretation rewrites query.text
+  // (the string providers/ranking actually search with) into English. See
+  // apply-search-intent.ts's doc comment for the full "original text is
+  // display-only, normalizedQuery is search-only" rule.
+  const [displayText, setDisplayText] = useState("");
   const unsupportedLanguage = containsUnsupportedScript(query.text);
   // Mirrors useSemanticRanking's own internal `canRank` condition: whenever AI
   // ranking is active, `semanticallyRanked` is the FULL catalog re-sorted by
@@ -63,9 +74,28 @@ export function ExploreExperience() {
     }));
   }
 
+  function handleDisplayTextChange(text: string) {
+    setDisplayText(text);
+    // Live-as-you-type local/provider search is completely unaffected by
+    // Gemini — this keeps working exactly as it did before this milestone.
+    setQuery((current) => ({ ...current, text }));
+  }
+
+  async function handleExplicitSubmit() {
+    const intent = await submitToGemini(displayText);
+    if (intent) {
+      setQuery((current) => applySearchIntent(current, intent));
+    }
+    // On any Gemini failure/unavailable reason, query.text already equals
+    // displayText from live typing — the existing local search path (and,
+    // for Hebrew, the existing honest unsupported-script notice) already
+    // applies with zero extra handling here.
+  }
+
   return (
     <div>
-      <SearchBar value={query.text} onChange={(text) => setQuery((current) => ({ ...current, text }))} />
+      <SearchBar value={displayText} onChange={handleDisplayTextChange} onSubmit={handleExplicitSubmit} />
+      <GeminiStatusNote status={geminiStatus} />
       <ProjectChips
         contextTags={query.contextTags}
         category={query.category}

@@ -45,6 +45,22 @@ const nextConfig: NextConfig = {
         hostname: "pixabay.com",
         pathname: "/get/**",
       },
+      {
+        protocol: "https",
+        hostname: "acg-media.struffelproductions.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "images-assets.nasa.gov",
+      },
+      {
+        protocol: "https",
+        hostname: "api.openverse.org",
+      },
     ],
   },
   async headers() {

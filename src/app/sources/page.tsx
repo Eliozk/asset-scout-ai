@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
 import { AUTHORIZED_INDEXED_CATALOG_SOURCES, LIVE_API_SOURCES } from "@/lib/sources/integrated-sources";
+import { RESEARCHED_NOT_IMPLEMENTED_SOURCES, REJECTED_SOURCES } from "@/lib/sources/researched-sources";
 import { EXTERNAL_MARKETPLACES } from "@/lib/marketplaces/registry";
 
 export const metadata: Metadata = {
@@ -188,6 +189,68 @@ export default function SourcesPage() {
               }
               limitation={marketplace.limitation}
             />
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-lg font-semibold text-foreground">Researched, not yet implemented</h2>
+        <p className="mt-1 max-w-3xl text-sm text-text-muted">
+          These {RESEARCHED_NOT_IMPLEMENTED_SOURCES.length} sources were independently researched against their
+          own official documentation and confirmed eligible for a real integration — a live API with acceptable
+          terms, or an official catalog that could be indexed the way Kenney&apos;s is. None of them are wired
+          into AssetScout yet. They are listed here for transparency, not as a claim that they&apos;re searched.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {RESEARCHED_NOT_IMPLEMENTED_SOURCES.map((source) => (
+            <article key={source.id} className="rounded-xl border border-border-subtle bg-surface-elevated p-4">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-sm font-semibold text-foreground">{source.name}</h3>
+                <a
+                  href={source.homepageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="focus-ring inline-flex items-center gap-1 rounded text-xs font-medium text-accent-cyan hover:underline"
+                  aria-label={`${source.name} official site (opens in a new tab)`}
+                >
+                  Official site
+                  <ExternalLink size={12} aria-hidden="true" />
+                </a>
+              </div>
+              <dl className="mt-3 grid gap-2 text-xs">
+                <div>
+                  <dt className="text-text-faint">Research classification</dt>
+                  <dd className="text-text-muted">
+                    {source.classification === "LIVE_API" ? "Live API — verified eligible" : "Authorized static catalog — verified eligible"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-text-faint">Results appear in AssetScout?</dt>
+                  <dd className="text-text-muted">Not yet — deferred, see reason below.</dd>
+                </div>
+                <div>
+                  <dt className="text-text-faint">Reason</dt>
+                  <dd className="text-text-muted">{source.reason}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-lg font-semibold text-foreground">Investigated and not integrated</h2>
+        <p className="mt-1 max-w-3xl text-sm text-text-muted">
+          These {REJECTED_SOURCES.length} sources were also researched and explicitly excluded — usually because
+          their own official terms don&apos;t permit this exact use, or because no lawful automated access exists
+          at all. AssetScout does not link to, search, or scrape any of them.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {REJECTED_SOURCES.map((source) => (
+            <article key={source.id} className="rounded-xl border border-border-subtle bg-surface p-4">
+              <h3 className="text-sm font-semibold text-foreground">{source.name}</h3>
+              <p className="mt-2 text-xs text-text-muted">{source.reason}</p>
+            </article>
           ))}
         </div>
       </section>

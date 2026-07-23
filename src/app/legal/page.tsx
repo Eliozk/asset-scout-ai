@@ -45,12 +45,17 @@ export default function LegalPage() {
       <Section title="Cost to use">
         AssetScout AI does not require an account, a subscription, or any payment information, and
         nothing on this site sells anything, processes a payment, or stores payment details. It is
-        currently built and operated to run on free tiers of its hosting and integrated-provider
+        currently built and operated to run on free tiers of its hosting, Gemini, and integrated-provider
         services at low traffic. That is a description of how it works today, not a permanent
         commitment — the quotas, availability, and pricing of the third-party services it depends on
-        (hosting, Poly Haven, Sketchfab, Pixabay, Kenney) are set by those providers and may change
-        without notice, and could in principle affect this project&apos;s ability to keep operating
-        exactly as described.
+        (hosting, Gemini, and every source on the{" "}
+        <a href="/sources" className="focus-ring rounded font-medium text-accent-cyan underline">
+          Sources
+        </a>{" "}
+        page) are set by those providers and may change without notice, and could in principle affect
+        this project&apos;s ability to keep operating exactly as described. Google&apos;s free Gemini
+        tier specifically is not promised to remain free or available forever — if it stops being
+        available, AssetScout AI simply continues using its existing local search, as it always has.
       </Section>
 
       <Section title="What data this site processes">
@@ -63,9 +68,31 @@ export default function LegalPage() {
         <p>
           <strong className="text-foreground">Search queries</strong> you type are sent to AssetScout
           AI&apos;s own server routes, which forward the relevant part of that query to whichever
-          integrated providers apply (e.g. Sketchfab, Pixabay) to retrieve results on your behalf. Query
-          text is never sent to OpenAI, Gemini, or any other AI/LLM provider or cloud inference service
-          (see &quot;Local AI, not cloud AI&quot; below).
+          integrated providers apply (e.g. Sketchfab, Pixabay, ambientCG) to retrieve results on your
+          behalf.
+        </p>
+        <p>
+          <strong className="text-foreground">Gemini query understanding</strong> is optional and only
+          runs when you explicitly submit a search (never on every keystroke) and a Gemini API key is
+          configured on the server. When it succeeds, the search phrase you submitted is sent to
+          Google&apos;s Gemini API to be translated/interpreted into a structured search description —
+          never your favorites, browsing history, IP address handling beyond what Google&apos;s own
+          infrastructure sees as the request origin, or any other unrelated data. Google&apos;s own{" "}
+          <a
+            href="https://ai.google.dev/gemini-api/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="focus-ring rounded font-medium text-accent-cyan underline"
+          >
+            Gemini API Additional Terms of Service
+          </a>{" "}
+          apply to that request. On the free tier this app uses, Google&apos;s terms state that submitted
+          content may be used to improve Google&apos;s products, and that de-identified input/output may
+          be reviewed by human reviewers — please don&apos;t type personal, confidential, or sensitive
+          information into the search box. If Gemini is unavailable, misconfigured, times out, or returns
+          an error for any reason, AssetScout AI automatically falls back to its existing local
+          keyword/semantic search with no interruption — this never produces an empty page. No API key or
+          Gemini configuration detail is ever sent to your browser.
         </p>
         <p>
           AssetScout AI uses Vercel Web Analytics to collect anonymous, aggregate usage information,
@@ -93,27 +120,39 @@ export default function LegalPage() {
         </p>
       </Section>
 
-      <Section title="Local AI, not cloud AI">
-        The semantic search ranking model runs entirely in your browser (via Transformers.js), downloaded
-        once from Hugging Face&apos;s public model hub. Your search text is never sent to OpenAI,
-        Gemini, or any other AI/LLM provider or cloud inference service.
+      <Section title="Local AI ranking vs. optional cloud query understanding">
+        <p>
+          The semantic search <em>ranking</em> model runs entirely in your browser (via Transformers.js),
+          downloaded once from Hugging Face&apos;s public model hub — your search text is never sent
+          anywhere for ranking purposes.
+        </p>
+        <p>
+          Gemini is a separate, optional step used only to <em>understand</em> what an explicitly-submitted
+          search means (translating Hebrew into English, for example) — it never ranks or chooses results,
+          never picks which providers to query, and never sees or returns provider names, URLs, prices, or
+          licenses. See &quot;What data this site processes&quot; above for exactly when and what is sent
+          to it, and what happens when it&apos;s unavailable.
+        </p>
       </Section>
 
       <Section title="Integrated sources &amp; external links">
         <p>
           Search results are fetched live (or served from a periodically refreshed static snapshot) from
-          Poly Haven, Sketchfab, Pixabay, and Kenney&apos;s official APIs/feeds — see the{" "}
+          each integrated source&apos;s official API/feed — see the{" "}
           <a href="/sources" className="focus-ring rounded font-medium text-accent-cyan underline">
             Sources
           </a>{" "}
-          page for exactly what that means for each one. Each result links back to that source&apos;s own
-          page, and its own license/terms govern actual use of that asset.
+          page for the complete current list and exactly what &quot;live&quot; means for each one. Each
+          result links back to that source&apos;s own page, and its own license/terms govern actual use of
+          that asset.
         </p>
         <p>
           The additional marketplace cards further down the Explore page (Unity Asset Store, Fab,
           itch.io, and others) are outbound links only — clicking one takes you to that marketplace&apos;s
           own site. AssetScout AI does not search, scrape, retrieve, or verify anything from them, and
-          has no relationship with or endorsement from any of them.
+          has no relationship with or endorsement from any of them. The Sources page also lists sources
+          that were researched but are not integrated — either verified-eligible and simply not built
+          yet, or explicitly excluded because their own terms don&apos;t permit this use.
         </p>
       </Section>
 

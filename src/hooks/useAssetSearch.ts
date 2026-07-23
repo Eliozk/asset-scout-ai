@@ -7,6 +7,10 @@ import { polyHavenSearchProvider } from "@/lib/providers/polyhaven/provider";
 import { sketchfabSearchProvider } from "@/lib/providers/sketchfab/provider";
 import { kenneyCatalogSearchProvider } from "@/lib/providers/kenney/provider";
 import { pixabaySearchProvider } from "@/lib/providers/pixabay/provider";
+import { ambientCGSearchProvider } from "@/lib/providers/ambientcg/provider";
+import { wikimediaSearchProvider } from "@/lib/providers/wikimedia/provider";
+import { nasaSearchProvider } from "@/lib/providers/nasa/provider";
+import { openverseSearchProvider } from "@/lib/providers/openverse/provider";
 import { fetchCombinedResults } from "@/lib/search/combined-search";
 import type { ProviderOutcome } from "@/lib/search/aggregate-providers";
 
@@ -15,6 +19,10 @@ const DEFAULT_PROVIDERS: readonly AssetSearchProvider[] = [
   sketchfabSearchProvider,
   kenneyCatalogSearchProvider,
   pixabaySearchProvider,
+  ambientCGSearchProvider,
+  wikimediaSearchProvider,
+  nasaSearchProvider,
+  openverseSearchProvider,
 ];
 
 interface SettledResult {

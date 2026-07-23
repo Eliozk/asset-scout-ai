@@ -3,8 +3,10 @@ import { ASSET_SOURCE_IDS } from "@/domain/asset";
 import { AUTHORIZED_INDEXED_CATALOG_SOURCES, LIVE_API_SOURCES } from "./integrated-sources";
 
 describe("LIVE_API_SOURCES", () => {
-  it("lists exactly Poly Haven, Sketchfab, and Pixabay", () => {
-    expect(LIVE_API_SOURCES.map((s) => s.id).sort()).toEqual(["pixabay", "polyhaven", "sketchfab"].sort());
+  it("lists exactly the 7 zero/optional-key live providers wired into search", () => {
+    expect(LIVE_API_SOURCES.map((s) => s.id).sort()).toEqual(
+      ["ambientcg", "nasa", "openverse", "pixabay", "polyhaven", "sketchfab", "wikimedia"].sort(),
+    );
   });
 
   it("every entry is a real, currently-supported AssetSourceId", () => {
@@ -34,8 +36,10 @@ describe("AUTHORIZED_INDEXED_CATALOG_SOURCES", () => {
 });
 
 describe("integrated sources overall", () => {
-  it("groups A and B together cover no more and no fewer than the 4 real live providers wired into search", () => {
+  it("groups A and B together cover no more and no fewer than the 8 real live providers wired into search", () => {
     const allIds = [...LIVE_API_SOURCES, ...AUTHORIZED_INDEXED_CATALOG_SOURCES].map((s) => s.id).sort();
-    expect(allIds).toEqual(["kenney", "pixabay", "polyhaven", "sketchfab"].sort());
+    expect(allIds).toEqual(
+      ["ambientcg", "kenney", "nasa", "openverse", "pixabay", "polyhaven", "sketchfab", "wikimedia"].sort(),
+    );
   });
 });

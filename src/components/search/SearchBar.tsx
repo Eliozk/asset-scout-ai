@@ -5,15 +5,20 @@ import { Sparkles } from "lucide-react";
 interface SearchBarProps {
   readonly value: string;
   readonly onChange: (value: string) => void;
+  /** Fires on explicit submission only (Enter or the button) — never on every keystroke. */
+  readonly onSubmit?: () => void;
 }
 
-export function SearchBar({ value, onChange }: SearchBarProps) {
+export function SearchBar({ value, onChange, onSubmit }: SearchBarProps) {
   return (
     <form
       role="search"
       aria-label="AI-powered asset search"
       className="mx-auto mt-8 flex w-full max-w-3xl flex-col gap-3 sm:flex-row"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSubmit?.();
+      }}
     >
       <label htmlFor="asset-search-input" className="sr-only">
         Describe the asset you need

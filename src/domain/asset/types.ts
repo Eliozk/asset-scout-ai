@@ -24,6 +24,10 @@ export const ASSET_SOURCE_IDS = [
   "polyhaven",
   "kenney",
   "pixabay",
+  "ambientcg",
+  "wikimedia",
+  "nasa",
+  "openverse",
   "fab",
   "itchio",
   "unity-asset-store",
@@ -57,6 +61,26 @@ export const ASSET_SOURCES: Readonly<Record<AssetSourceId, AssetSource>> = {
     id: "pixabay",
     label: "Pixabay",
     homepageUrl: "https://pixabay.com",
+  },
+  ambientcg: {
+    id: "ambientcg",
+    label: "ambientCG",
+    homepageUrl: "https://ambientcg.com",
+  },
+  wikimedia: {
+    id: "wikimedia",
+    label: "Wikimedia Commons",
+    homepageUrl: "https://commons.wikimedia.org",
+  },
+  nasa: {
+    id: "nasa",
+    label: "NASA Image Library",
+    homepageUrl: "https://images.nasa.gov",
+  },
+  openverse: {
+    id: "openverse",
+    label: "Openverse",
+    homepageUrl: "https://openverse.org",
   },
   fab: {
     id: "fab",

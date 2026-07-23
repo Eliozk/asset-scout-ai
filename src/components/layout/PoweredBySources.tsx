@@ -1,6 +1,9 @@
-import { ASSET_SOURCES, type AssetSourceId } from "@/domain/asset";
+import { ASSET_SOURCES } from "@/domain/asset";
+import { AUTHORIZED_INDEXED_CATALOG_SOURCES, LIVE_API_SOURCES } from "@/lib/sources/integrated-sources";
 
-const LIVE_SOURCE_IDS: readonly AssetSourceId[] = ["polyhaven", "sketchfab", "kenney", "pixabay"];
+// Derived from the same registries /sources renders from — never a separately
+// maintained list, so it can't silently drift out of sync as sources are added.
+const LIVE_SOURCE_IDS = [...LIVE_API_SOURCES, ...AUTHORIZED_INDEXED_CATALOG_SOURCES].map((source) => source.id);
 
 /**
  * Aggregate attribution for the currently-integrated live sources. Per-asset

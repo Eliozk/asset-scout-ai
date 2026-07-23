@@ -33,6 +33,14 @@ export interface ExternalMarketplace {
   /** True only for "outbound-search" entries — whether buildUrl(query) actually varies the destination. */
   readonly supportsQuery: boolean;
   /**
+   * How supportsQuery entries encode the query into the URL — a
+   * query-string parameter (the default/original pattern, e.g. ?q=...) or a
+   * URL PATH segment (e.g. texturecan.com/search/{query}/1/, the only
+   * pattern verified to actually work for that specific site). Absent for
+   * outbound-browse entries.
+   */
+  readonly searchUrlStyle?: "query-string" | "path";
+  /**
    * Builds the outbound URL for a given (already-trimmed) query. Always
    * returns a URL on this entry's own hard-coded HTTPS host — `query` can
    * only ever become the *value* of a query-string parameter (via
@@ -58,6 +66,39 @@ function buildSearchUrl(base: string, param: string, query: string, homepageUrl:
   if (trimmed === "") return homepageUrl;
   const url = new URL(base);
   url.searchParams.set(param, trimmed);
+  return url.toString();
+}
+
+/**
+ * True for a query that consists ENTIRELY of "." characters (".", "..",
+ * "...", ...) once trimmed. Verified empirically (not just by RFC 3986
+ * reading) against the real WHATWG URL implementation: percent-encoding a
+ * pure dot-segment's dots (e.g. ".." -> "%2E%2E") does NOT stop
+ * `url.pathname = "/search/%2E%2E/1/"` from still collapsing to "/1/" —
+ * this runtime decodes-and-normalizes dot segments even through percent
+ * escapes, so encoding alone can't make a PURE "." or ".." segment safe.
+ * A MIXED string containing dots plus other characters (e.g.
+ * "../../etc/passwd", one of the hostile-input test fixtures) is unaffected
+ * — verified it stays intact as one literal path segment, "/search/" prefix
+ * preserved — so this guard only needs to catch the pure-dots case.
+ */
+function isOnlyDots(value: string): boolean {
+  return /^\.+$/.test(value);
+}
+
+/**
+ * Percent-encodes one query as a single URL PATH segment (for marketplaces
+ * whose only verified search URL is path-based, e.g. texturecan.com/search/
+ * {query}/1/, not a query-string parameter). A pure-dots query has no safe
+ * path-segment representation in this URL engine (see isOnlyDots) and falls
+ * back to the homepage, same as an empty query — it's a degenerate,
+ * meaningless search term anyway, not a real loss of functionality.
+ */
+function buildPathSearchUrl(baseOrigin: string, pathTemplate: (encodedQuery: string) => string, query: string, homepageUrl: string): string {
+  const trimmed = query.trim();
+  if (trimmed === "" || isOnlyDots(trimmed)) return homepageUrl;
+  const url = new URL(baseOrigin);
+  url.pathname = pathTemplate(encodeURIComponent(trimmed));
   return url.toString();
 }
 
@@ -169,5 +210,51 @@ export const EXTERNAL_MARKETPLACES: readonly ExternalMarketplace[] = [
       "Mixamo requires a free Adobe account to browse or search its characters and animations, and its browsing UI isn't reachable by a plain link — this opens Mixamo's homepage.",
     supportsQuery: false,
     buildUrl: () => "https://www.mixamo.com/",
+  },
+  {
+    id: "texturecan-external",
+    name: "TextureCan",
+    specialties: ["PBR textures"],
+    mode: "outbound-search",
+    homepageUrl: "https://www.texturecan.com/",
+    limitation:
+      "No official API exists — opens TextureCan's own search results in a new tab (verified live: /search/{query}/1/ reflects the real query). AssetScout does not read license or commercial-use terms from it.",
+    supportsQuery: true,
+    searchUrlStyle: "path",
+    buildUrl: (query) =>
+      buildPathSearchUrl("https://www.texturecan.com", (q) => `/search/${q}/1/`, query, "https://www.texturecan.com/"),
+  },
+  {
+    id: "productioncrate-external",
+    name: "ProductionCrate",
+    specialties: ["VFX assets", "3D models", "textures"],
+    mode: "outbound-search",
+    homepageUrl: "https://vfx.productioncrate.com/",
+    limitation:
+      "No official API exists, and its Free/Personal/Pro tiers explicitly exclude corporate/institutional use per its own Terms — opens ProductionCrate's own search in a new tab; AssetScout never fetches or displays its content directly.",
+    supportsQuery: true,
+    buildUrl: (query) => buildSearchUrl("https://vfx.productioncrate.com/search", "s", query, "https://vfx.productioncrate.com/"),
+  },
+  {
+    id: "cgbookcase-external",
+    name: "CGBookcase",
+    specialties: ["PBR textures"],
+    mode: "outbound-browse",
+    homepageUrl: "https://www.cgbookcase.com/textures",
+    limitation:
+      "All textures are CC0, but no API and no verified query-preserving search URL exist — this opens CGBookcase's textures browse page instead of an unverified search URL.",
+    supportsQuery: false,
+    buildUrl: () => "https://www.cgbookcase.com/textures",
+  },
+  {
+    id: "quaternius-external",
+    name: "Quaternius",
+    specialties: ["low-poly 3D packs"],
+    mode: "outbound-browse",
+    homepageUrl: "https://quaternius.com/assets.html",
+    limitation:
+      "All packs are CC0 and free, but there is no API, feed, or search — this opens Quaternius's own asset browse page.",
+    supportsQuery: false,
+    buildUrl: () => "https://quaternius.com/assets.html",
   },
 ];

@@ -42,6 +42,47 @@ export const LIVE_API_SOURCES: readonly IntegratedSourceInfo[] = [
     limitation: "Images only — Pixabay's public API does not expose its 3D Models, Music, Sound Effects, or GIFs categories.",
     homepageUrl: "https://pixabay.com",
   },
+  {
+    id: "ambientcg",
+    name: "ambientCG",
+    assetTypes: ["PBR materials", "HDRIs"],
+    connectionMode: "live-api",
+    attributionNote: "CC0 — public domain, confirmed on ambientCG's own license page. Attribution is appreciated but not legally required.",
+    limitation:
+      "Only Material and HDRI results are shown — ambientCG's other asset kinds (Decal, Atlas, Substance, Terrain, Brush, PlainTexture) aren't mapped to a normalized asset type yet. No published numeric rate limit; queried conservatively.",
+    homepageUrl: "https://ambientcg.com",
+  },
+  {
+    id: "wikimedia",
+    name: "Wikimedia Commons",
+    assetTypes: ["photos", "scans", "illustrations"],
+    connectionMode: "live-api",
+    attributionNote:
+      "License varies per file and is shown on each result (CC0, CC BY, or other — never guessed). Files with no usable license metadata are labeled unknown/unverified, never assumed free.",
+    limitation:
+      "General reference images, not verified game-ready asset packs — shown as flat 2D texture/reference material. Results are restricted to actual image files (bitmap/drawing), never audio, video, or category pages.",
+    homepageUrl: "https://commons.wikimedia.org",
+  },
+  {
+    id: "nasa",
+    name: "NASA Image Library",
+    assetTypes: ["space & science photography"],
+    connectionMode: "live-api",
+    attributionNote:
+      "Generally not copyrighted in the US per NASA's own media guidelines — not a Creative Commons grant. A small number of items carry third-party copyright; verify on the details page. Never use the NASA insignia/logo to imply endorsement.",
+    limitation: "Restricted to media_type=image only — NASA's library also hosts audio/video, not shown here.",
+    homepageUrl: "https://images.nasa.gov",
+  },
+  {
+    id: "openverse",
+    name: "Openverse",
+    assetTypes: ["openly-licensed images"],
+    connectionMode: "live-api",
+    attributionNote:
+      "License varies per result and is shown on each card, using Openverse's own attribution text. Made with Openverse — AssetScout is not endorsed or certified by Openverse.",
+    limitation: "Queried anonymously (no registered client) — a lower rate-limit tier than a registered Openverse API client; mature-flagged content is always excluded.",
+    homepageUrl: "https://openverse.org",
+  },
 ];
 
 /** Group B: a versioned static snapshot, regenerated periodically — never fetched live at search time. */

@@ -12,8 +12,8 @@ const HOSTILE_QUERIES = [
 ];
 
 describe("EXTERNAL_MARKETPLACES registry", () => {
-  it("has exactly the 10 marketplaces from Milestone 4 Phase 4", () => {
-    expect(EXTERNAL_MARKETPLACES).toHaveLength(10);
+  it("has exactly the 14 marketplaces (10 from Milestone 4 Phase 4 + 4 added for the Gemini/provider-expansion milestone)", () => {
+    expect(EXTERNAL_MARKETPLACES).toHaveLength(14);
   });
 
   it("has unique, non-empty ids", () => {
@@ -56,7 +56,7 @@ describe("EXTERNAL_MARKETPLACES registry", () => {
     }
   });
 
-  it("classifies exactly the 6 marketplaces with a verified query-preserving URL as outbound-search, and the other 4 as outbound-browse", () => {
+  it("classifies exactly the 8 marketplaces with a verified query-preserving URL as outbound-search, and the other 6 as outbound-browse", () => {
     const searchNames = EXTERNAL_MARKETPLACES.filter((m) => m.mode === "outbound-search")
       .map((m) => m.name)
       .sort();
@@ -65,9 +65,11 @@ describe("EXTERNAL_MARKETPLACES registry", () => {
       .sort();
 
     expect(searchNames).toEqual(
-      ["Unity Asset Store", "Fab", "itch.io", "OpenGameArt", "CraftPix", "CGTrader"].sort(),
+      ["Unity Asset Store", "Fab", "itch.io", "OpenGameArt", "CraftPix", "CGTrader", "TextureCan", "ProductionCrate"].sort(),
     );
-    expect(browseNames).toEqual(["ArtStation Marketplace", "GameDev Market", "TurboSquid", "Mixamo"].sort());
+    expect(browseNames).toEqual(
+      ["ArtStation Marketplace", "GameDev Market", "TurboSquid", "Mixamo", "CGBookcase", "Quaternius"].sort(),
+    );
   });
 
   it("classifies CGTrader as an external outbound-search marketplace, never as a live API integration", async () => {
@@ -96,7 +98,7 @@ describe("EXTERNAL_MARKETPLACES registry", () => {
       expect(marketplace.buildUrl("\t\n")).toBe(marketplace.homepageUrl);
     });
 
-    if (marketplace.supportsQuery) {
+    if (marketplace.supportsQuery && marketplace.searchUrlStyle !== "path") {
       function decodedParamValues(url: URL): readonly string[] {
         return [...url.searchParams.values()];
       }
@@ -127,6 +129,37 @@ describe("EXTERNAL_MARKETPLACES registry", () => {
         // parameter of its own (e.g. "&redirect=..." must not become a real "redirect" param).
         expect(url.searchParams.has("redirect")).toBe(false);
         expect(url.searchParams.has("admin")).toBe(false);
+      });
+    } else if (marketplace.supportsQuery && marketplace.searchUrlStyle === "path") {
+      // Path-based search (e.g. texturecan.com/search/{query}/1/) — the query
+      // lives in the URL PATH, not a query-string parameter, so it's verified
+      // by decoding the pathname segment instead of searchParams.
+      it("round-trips an English/Hebrew/punctuated query through the path safely", () => {
+        for (const query of ["dragon castle", "מבצר קסום", "sci-fi: robot's \"laser\" gun (v2) & shield"]) {
+          const url = new URL(marketplace.buildUrl(query));
+          expect(decodeURIComponent(url.pathname)).toContain(query);
+        }
+      });
+
+      it("never lets a mixed hostile query (slashes, dots-plus-text) escape the intended search path", () => {
+        for (const hostile of [...HOSTILE_QUERIES, "a/../../b"]) {
+          const url = new URL(marketplace.buildUrl(hostile));
+          expect(url.protocol).toBe("https:");
+          expect(url.hostname).toBe(new URL(marketplace.homepageUrl).hostname);
+          // "/search/" must still be present as a literal, un-collapsed prefix —
+          // dot-segment normalization would have removed it if the query could
+          // inject a literal "/" or a bare "."/".." segment.
+          expect(url.pathname.startsWith("/search/")).toBe(true);
+        }
+      });
+
+      it("falls back to the homepage for a pure-dots query (\".\", \"..\"), which has no safe path-segment representation", () => {
+        // Verified empirically: this URL engine collapses a dot-segment even
+        // through percent-encoding (see registry.ts's isOnlyDots doc comment),
+        // so the only safe behavior is the same fallback as an empty query.
+        expect(marketplace.buildUrl(".")).toBe(marketplace.homepageUrl);
+        expect(marketplace.buildUrl("..")).toBe(marketplace.homepageUrl);
+        expect(marketplace.buildUrl("...")).toBe(marketplace.homepageUrl);
       });
     } else {
       it("always returns the homepage regardless of query (outbound-browse never fabricates a search URL)", () => {

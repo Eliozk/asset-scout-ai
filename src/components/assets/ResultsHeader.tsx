@@ -1,7 +1,10 @@
 import Link from "next/link";
 import type { SortOption } from "@/domain/asset";
 import { PoweredBySources } from "@/components/layout/PoweredBySources";
+import { AUTHORIZED_INDEXED_CATALOG_SOURCES, LIVE_API_SOURCES } from "@/lib/sources/integrated-sources";
 import { SortSelect } from "./SortSelect";
+
+const LIVE_SOURCE_COUNT = LIVE_API_SOURCES.length + AUTHORIZED_INDEXED_CATALOG_SOURCES.length;
 
 interface ResultsHeaderProps {
   readonly count: number;
@@ -36,7 +39,7 @@ export function ResultsHeader({ count, sort, onSortChange, aiRanked = false }: R
           <PoweredBySources />
         </p>
         <p className="text-xs text-text-faint">
-          Only these 4 sources are searched inside AssetScout. The marketplaces further down the page are
+          Only these {LIVE_SOURCE_COUNT} sources are searched inside AssetScout. The marketplaces further down the page are
           outbound links only — see{" "}
           <Link href="/sources" className="focus-ring rounded underline hover:text-text-muted">
             Sources
