@@ -27,8 +27,9 @@ independent providers in parallel — Poly Haven, Sketchfab, Kenney, Pixabay, am
 Commons, NASA Image Library, and Openverse — normalizes their very different response shapes into one
 consistent result card (price, license, format, engine compatibility), and re-ranks the combined
 results with a small AI model that runs **entirely on the visitor's own device**. An optional Gemini
-step can translate a natural-language request (English, Hebrew, or otherwise) into a structured search
-before any provider is queried — Gemini only *interprets*, it never invents a result, provider, price,
+step can translate a natural-language request — multilingual query understanding, live-verified in
+English, Hebrew, Spanish, and Arabic (not a claim of universal language support) — into a structured
+search before any provider is queried — Gemini only *interprets*, it never invents a result, provider, price,
 or license, and the entire app works exactly as before with no key configured at all. No paid APIs
 required, no cloud AI inference for ranking, no scraping.
 
@@ -37,7 +38,8 @@ required, no cloud AI inference for ranking, no scraping.
 Finding a usable game asset today means opening half a dozen marketplace tabs — each with its own
 search syntax, licensing terms, and inconsistent metadata — and manually cross-checking whether a
 result is actually free, actually the right format, and actually fits the project. AssetScout
-collapses that into one search box — describable in plain language, in English or Hebrew — while being
+collapses that into one search box — describable in plain language, with multilingual query
+understanding verified in English, Hebrew, Spanish, and Arabic — while being
 explicit about which results are genuinely integrated and which are just outbound links to other
 marketplaces, rather than pretending to search everywhere.
 
