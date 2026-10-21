@@ -56,7 +56,7 @@ describe("normalizeSketchfabModel", () => {
 
   it("maps only recognized archive keys to formats, dropping unknown ones (source, usdz)", () => {
     const asset = normalize(DOWNLOADABLE_CC_BY_MODEL);
-    expect(asset.formats?.sort()).toEqual(["GLB", "GLTF"].sort());
+    expect([...(asset.formats ?? [])].sort()).toEqual(["GLB", "GLTF"].sort());
   });
 
   it("omits formats entirely when there are no archives", () => {

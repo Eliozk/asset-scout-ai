@@ -30,7 +30,7 @@ function makeProvider(id: string, assets: readonly AssetSearchResult[], error?: 
     label: id,
     async search() {
       if (error) throw new Error(error);
-      return assets;
+      return [...assets];
     },
   };
 }

@@ -18,7 +18,7 @@ describe("parseSketchfabRawModel", () => {
     expect(parsed?.name).toBe("The Wizard's Chair");
     expect(parsed?.isDownloadable).toBe(true);
     expect(parsed?.license?.label).toBe("CC Attribution-NonCommercial-NoDerivs");
-    expect(parsed?.archiveFormats.sort()).toEqual(["glb", "gltf", "source", "usdz"].sort());
+    expect([...(parsed?.archiveFormats ?? [])].sort()).toEqual(["glb", "gltf", "source", "usdz"].sort());
   });
 
   it("accepts a valid model with a null license and no archives", () => {

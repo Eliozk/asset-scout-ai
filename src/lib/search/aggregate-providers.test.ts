@@ -33,7 +33,7 @@ function makeProvider(
     async search() {
       if (behavior.delayMs) await new Promise((r) => setTimeout(r, behavior.delayMs));
       if (behavior.error) throw new Error(behavior.error);
-      return behavior.assets ?? [];
+      return [...(behavior.assets ?? [])];
     },
   };
 }

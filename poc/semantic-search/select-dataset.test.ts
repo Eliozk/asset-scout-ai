@@ -82,7 +82,7 @@ describe("selectPocDataset", () => {
 
   it("guarantees the preferred real city-skyline HDRIs are included when present", () => {
     const result = selectPocDataset(catalog, 15);
-    expect(result.citySkylineIdsFound.sort()).toEqual(["rooftop_night", "shanghai_riverside", "sunset_jhbcentral"].sort());
+    expect([...result.citySkylineIdsFound].sort()).toEqual(["rooftop_night", "shanghai_riverside", "sunset_jhbcentral"].sort());
     const ids = result.assets.map((a) => a.id);
     expect(ids).toContain("polyhaven:sunset_jhbcentral");
     expect(ids).toContain("polyhaven:shanghai_riverside");
@@ -92,7 +92,7 @@ describe("selectPocDataset", () => {
   it("reports only the city-skyline ids that actually exist in the catalog, never fabricating", () => {
     const partial = catalog.filter((a) => a.id !== "polyhaven:rooftop_night");
     const result = selectPocDataset(partial, 15);
-    expect(result.citySkylineIdsFound.sort()).toEqual(["shanghai_riverside", "sunset_jhbcentral"].sort());
+    expect([...result.citySkylineIdsFound].sort()).toEqual(["shanghai_riverside", "sunset_jhbcentral"].sort());
     expect(result.assets.some((a) => a.id === "polyhaven:rooftop_night")).toBe(false);
   });
 
