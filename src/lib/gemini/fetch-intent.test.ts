@@ -1,10 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { mockGenerateContent } = vi.hoisted(() => ({ mockGenerateContent: vi.fn() }));
+const { mockGenerateContent, mockConstructor } = vi.hoisted(() => ({
+  mockGenerateContent: vi.fn(),
+  mockConstructor: vi.fn(),
+}));
 
 vi.mock("@google/genai", () => {
   class FakeGoogleGenAI {
     models = { generateContent: mockGenerateContent };
+    constructor(options: unknown) {
+      mockConstructor(options);
+    }
   }
   return { GoogleGenAI: FakeGoogleGenAI };
 });
@@ -184,6 +190,21 @@ describe("fetchSearchIntentFromGemini", () => {
     await fetchSearchIntentFromGemini("sword");
     const [args] = mockGenerateContent.mock.calls[0];
     expect(args.model).toBe("gemini-3.5-flash");
+  });
+
+  it("reuses one client across calls, and builds a new one only when the API key changes", async () => {
+    process.env.GEMINI_API_KEY = "reuse-test-key-a";
+    mockGenerateContent.mockResolvedValue({ text: JSON.stringify(VALID_RAW_INTENT) });
+    mockConstructor.mockClear();
+
+    await fetchSearchIntentFromGemini("sword");
+    await fetchSearchIntentFromGemini("shield");
+    expect(mockConstructor).toHaveBeenCalledTimes(1);
+
+    process.env.GEMINI_API_KEY = "reuse-test-key-b";
+    await fetchSearchIntentFromGemini("sword");
+    expect(mockConstructor).toHaveBeenCalledTimes(2);
+    expect(mockConstructor).toHaveBeenLastCalledWith({ apiKey: "reuse-test-key-b" });
   });
 
   it("requests structured JSON output via responseMimeType + responseSchema", async () => {

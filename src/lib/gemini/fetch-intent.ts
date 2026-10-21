@@ -59,6 +59,17 @@ export function isGeminiConfigured(): boolean {
   return typeof process.env.GEMINI_API_KEY === "string" && process.env.GEMINI_API_KEY.trim() !== "";
 }
 
+// One client per warm server instance instead of one per request. Keyed by
+// the API key so a rotated key (new deployment env) never reuses a stale client.
+let cachedClient: { readonly apiKey: string; readonly client: GoogleGenAI } | null = null;
+
+function getClient(apiKey: string): GoogleGenAI {
+  if (cachedClient?.apiKey !== apiKey) {
+    cachedClient = { apiKey, client: new GoogleGenAI({ apiKey }) };
+  }
+  return cachedClient.client;
+}
+
 function resolveModel(): string {
   const configured = process.env.GEMINI_MODEL?.trim();
   return configured && configured !== "" ? configured : DEFAULT_MODEL;
@@ -85,7 +96,7 @@ export async function fetchSearchIntentFromGemini(rawQuery: string): Promise<Gem
     return { ok: false, reason: "missing-key" };
   }
 
-  const client = new GoogleGenAI({ apiKey });
+  const client = getClient(apiKey);
   const model = resolveModel();
   const abortSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
 
