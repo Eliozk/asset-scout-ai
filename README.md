@@ -237,8 +237,10 @@ test. Refresh both together with `npm run catalog:refresh`.
   deliberately not added — the local model download (Hugging Face's CDN, multiple/rotating hosts)
   isn't fully enumerable without live testing every host, and an under-tested CSP risks silently
   breaking model loading, remote images, or the external marketplace links.
-- No user accounts, payment processing, advertising scripts, or tracking cookies. Anonymous,
-  cookie-free traffic statistics are collected with Vercel Web Analytics.
+- No user accounts, payment processing, or advertising scripts. Anonymous, cookie-free traffic
+  statistics are collected with Vercel Web Analytics. Microsoft Clarity (cookies + session replay)
+  loads only after a visitor accepts the consent banner, and only on the live host — never on
+  localhost or Vercel preview URLs. "Cookie settings" in the footer changes the choice.
 - See [`/legal`](https://asset-scout-ai.vercel.app/legal) for the full privacy/terms notice — it
   makes no guarantee of permanent zero cost or blanket legal compliance in every jurisdiction, and
   says so directly.

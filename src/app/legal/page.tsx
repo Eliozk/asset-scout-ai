@@ -98,8 +98,29 @@ export default function LegalPage() {
           AssetScout AI uses Vercel Web Analytics to collect anonymous, aggregate usage information,
           such as page views, referrers, approximate country, device, and browser type. Vercel Web
           Analytics does not use cookies and is not used here to identify individual visitors or build
-          personal profiles. AssetScout AI does not run advertising scripts or non-essential tracking
-          cookies. That said, request
+          personal profiles. AssetScout AI does not run advertising scripts.
+        </p>
+        <p>
+          Only if you choose <strong>Accept</strong> in the cookie banner, AssetScout AI also loads
+          Microsoft Clarity, a behavioral analytics tool. Clarity sets its own cookies and records how
+          the site is used — clicks, scrolling, mouse movement, pages visited, device and browser, and
+          session replays — to help improve the site. Text typed into input fields is masked before it
+          leaves your browser. If you choose <strong>Decline</strong>, or make no choice, Clarity is
+          never loaded. You can change your choice at any time with the <em>Cookie settings</em> link
+          in the footer; withdrawing consent erases Clarity&apos;s cookies. Microsoft processes this
+          data under the{" "}
+          <a
+            href="https://privacy.microsoft.com/privacystatement"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="focus-ring rounded font-medium text-accent-cyan underline"
+          >
+            Microsoft Privacy Statement
+          </a>
+          .
+        </p>
+        <p>
+          That said, request
           processing is not limited to this project&apos;s own code: Vercel (the hosting provider) and
           the upstream providers a query is forwarded to necessarily process standard web request data —
           things like IP address, user-agent, request contents, and operational logs — under their own

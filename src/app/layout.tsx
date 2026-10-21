@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { FavoritesFab } from "@/components/layout/FavoritesFab";
+import { ClarityAnalytics } from "@/components/analytics/ClarityAnalytics";
+import { ConsentBanner } from "@/components/analytics/ConsentBanner";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site-config";
 import "./globals.css";
 
@@ -67,6 +69,8 @@ export default function RootLayout({
         <Footer />
         <FavoritesFab />
         <Analytics />
+        <ConsentBanner />
+        <ClarityAnalytics />
       </body>
     </html>
   );

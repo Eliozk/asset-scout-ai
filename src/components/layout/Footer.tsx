@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/analytics/CookieSettingsButton";
 import { AUTHORIZED_INDEXED_CATALOG_SOURCES, LIVE_API_SOURCES } from "@/lib/sources/integrated-sources";
 
 export function Footer() {
@@ -33,6 +34,7 @@ export function Footer() {
           <Link href="/legal" className="focus-ring rounded font-medium text-text-muted underline hover:text-foreground">
             Privacy &amp; Terms
           </Link>
+          <CookieSettingsButton />
         </div>
       </div>
     </footer>
