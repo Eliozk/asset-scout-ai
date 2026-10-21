@@ -9,6 +9,10 @@ const PROVIDER_ID_TO_SOURCE: Readonly<Record<string, AssetSourceId>> = {
   "sketchfab-live": "sketchfab",
   "kenney-catalog": "kenney",
   "pixabay-live": "pixabay",
+  "ambientcg-live": "ambientcg",
+  "wikimedia-live": "wikimedia",
+  "nasa-live": "nasa",
+  "openverse-live": "openverse",
 };
 
 interface ProviderErrorBannerProps {

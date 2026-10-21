@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AssetSearchProvider, AssetSearchResult } from "@/domain/asset";
 import { DEFAULT_QUERY } from "@/domain/asset";
-import { searchAllProviders } from "./aggregate-providers";
+import { searchAllProviders, searchProvidersProgressively, type AggregatedSearchResult } from "./aggregate-providers";
 
 function makeAsset(id: string, source: AssetSearchResult["source"] = "polyhaven"): AssetSearchResult {
   return {
@@ -85,5 +85,87 @@ describe("searchAllProviders", () => {
 
     expect(result.results).toEqual([]);
     expect(result.providerOutcomes.every((o) => o.status === "rejected")).toBe(true);
+  });
+});
+
+describe("searchProvidersProgressively", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function collect() {
+    const snapshots: { snapshot: AggregatedSearchResult; isFinal: boolean }[] = [];
+    return { snapshots, onSnapshot: (snapshot: AggregatedSearchResult, isFinal: boolean) => snapshots.push({ snapshot, isFinal }) };
+  }
+
+  it("emits a single final snapshot when every provider answers within the grace window", async () => {
+    vi.useFakeTimers();
+    const { snapshots, onSnapshot } = collect();
+    searchProvidersProgressively(
+      [makeProvider("fast", { assets: [makeAsset("f1")], delayMs: 100 }), makeProvider("ok", { assets: [makeAsset("o1")], delayMs: 900 })],
+      DEFAULT_QUERY,
+      onSnapshot,
+      { graceMs: 3_000, timeoutMs: 8_000 },
+    );
+
+    await vi.advanceTimersByTimeAsync(1_000);
+
+    expect(snapshots).toHaveLength(1);
+    expect(snapshots[0].isFinal).toBe(true);
+    expect(snapshots[0].snapshot.results.map((r) => r.id).sort()).toEqual(["f1", "o1"]);
+  });
+
+  it("never lets a hanging provider hold the page: shows healthy results after the grace window", async () => {
+    vi.useFakeTimers();
+    const { snapshots, onSnapshot } = collect();
+    searchProvidersProgressively(
+      [makeProvider("fast", { assets: [makeAsset("f1")], delayMs: 500 }), makeProvider("hang", { assets: [makeAsset("h1")], delayMs: 60_000 })],
+      DEFAULT_QUERY,
+      onSnapshot,
+      { graceMs: 3_000, timeoutMs: 8_000 },
+    );
+
+    await vi.advanceTimersByTimeAsync(3_600);
+    expect(snapshots).toHaveLength(1);
+    expect(snapshots[0].isFinal).toBe(false);
+    expect(snapshots[0].snapshot.results.map((r) => r.id)).toEqual(["f1"]);
+    expect(snapshots[0].snapshot.providerOutcomes.find((o) => o.providerId === "hang")?.status).toBe("pending");
+
+    await vi.advanceTimersByTimeAsync(5_000);
+    const last = snapshots.at(-1)!;
+    expect(last.isFinal).toBe(true);
+    expect(last.snapshot.providerOutcomes.find((o) => o.providerId === "hang")?.status).toBe("rejected");
+  });
+
+  it("still merges a slow-but-healthy provider that lands after the partial snapshot", async () => {
+    vi.useFakeTimers();
+    const { snapshots, onSnapshot } = collect();
+    searchProvidersProgressively(
+      [makeProvider("fast", { assets: [makeAsset("f1")], delayMs: 200 }), makeProvider("slow", { assets: [makeAsset("s1")], delayMs: 5_000 })],
+      DEFAULT_QUERY,
+      onSnapshot,
+      { graceMs: 3_000, timeoutMs: 8_000 },
+    );
+
+    await vi.advanceTimersByTimeAsync(6_000);
+
+    expect(snapshots.map((s) => s.isFinal)).toEqual([false, true]);
+    expect(snapshots[1].snapshot.results.map((r) => r.id).sort()).toEqual(["f1", "s1"]);
+  });
+
+  it("emits nothing after cancel", async () => {
+    vi.useFakeTimers();
+    const { snapshots, onSnapshot } = collect();
+    const cancel = searchProvidersProgressively([makeProvider("fast", { assets: [makeAsset("f1")], delayMs: 100 })], DEFAULT_QUERY, onSnapshot);
+    cancel();
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(snapshots).toHaveLength(0);
+  });
+
+  it("emits a final empty snapshot for an empty provider list", async () => {
+    const { snapshots, onSnapshot } = collect();
+    searchProvidersProgressively([], DEFAULT_QUERY, onSnapshot);
+    await Promise.resolve();
+    expect(snapshots).toEqual([{ snapshot: { results: [], providerOutcomes: [] }, isFinal: true }]);
   });
 });

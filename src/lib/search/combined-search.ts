@@ -1,5 +1,10 @@
 import type { AssetSearchProvider, AssetSearchQuery } from "@/domain/asset";
-import { searchAllProviders, type AggregatedSearchResult } from "./aggregate-providers";
+import {
+  searchAllProviders,
+  searchProvidersProgressively,
+  type AggregatedSearchResult,
+  type ProgressiveSearchOptions,
+} from "./aggregate-providers";
 import { deduplicateAssets } from "./deduplicate";
 import { sortAssets } from "./sort";
 
@@ -17,4 +22,21 @@ export async function fetchCombinedResults(
   const deduped = deduplicateAssets(results);
   const sorted = sortAssets(deduped, query.sort);
   return { results: sorted, providerOutcomes };
+}
+
+/** Progressive variant (see searchProvidersProgressively): every snapshot is deduplicated and sorted the same way. */
+export function fetchCombinedResultsProgressively(
+  providers: readonly AssetSearchProvider[],
+  query: AssetSearchQuery,
+  onSnapshot: (snapshot: AggregatedSearchResult, isFinal: boolean) => void,
+  options?: ProgressiveSearchOptions,
+): () => void {
+  return searchProvidersProgressively(
+    providers,
+    query,
+    ({ results, providerOutcomes }, isFinal) => {
+      onSnapshot({ results: sortAssets(deduplicateAssets(results), query.sort), providerOutcomes }, isFinal);
+    },
+    options,
+  );
 }

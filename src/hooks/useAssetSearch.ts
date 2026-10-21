@@ -11,7 +11,7 @@ import { ambientCGSearchProvider } from "@/lib/providers/ambientcg/provider";
 import { wikimediaSearchProvider } from "@/lib/providers/wikimedia/provider";
 import { nasaSearchProvider } from "@/lib/providers/nasa/provider";
 import { openverseSearchProvider } from "@/lib/providers/openverse/provider";
-import { fetchCombinedResults } from "@/lib/search/combined-search";
+import { fetchCombinedResultsProgressively } from "@/lib/search/combined-search";
 import type { ProviderOutcome } from "@/lib/search/aggregate-providers";
 
 const DEFAULT_PROVIDERS: readonly AssetSearchProvider[] = [
@@ -44,6 +44,10 @@ interface SettledResult {
  * failure stays "success" with a smaller result set, surfaced instead via
  * `providerOutcomes` for a non-blocking "source unavailable" notice.
  *
+ * Results arrive progressively (see searchProvidersProgressively): a single
+ * hanging source can't hold the page for its full timeout — healthy results
+ * show within a few seconds, and late arrivals are merged in when they land.
+ *
  * Status is derived during render by comparing the last *settled* query to
  * the current one, rather than set with a synchronous setState call inside
  * the effect body — that pattern causes an avoidable extra render and is
@@ -54,28 +58,16 @@ export function useAssetSearch(providers: readonly AssetSearchProvider[] = DEFAU
   const [settled, setSettled] = useState<SettledResult | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    fetchCombinedResults(providers, query)
-      .then(({ results, providerOutcomes }) => {
-        if (cancelled) return;
-        const allFailed = providerOutcomes.length > 0 && providerOutcomes.every((o) => o.status === "rejected");
-        if (allFailed) {
-          const message = providerOutcomes[0]?.error ?? "Search failed unexpectedly.";
-          setSettled({ query, status: "error", results: [], error: message, providerOutcomes });
-        } else {
-          setSettled({ query, status: "success", results, error: null, providerOutcomes });
-        }
-      })
-      .catch((error: unknown) => {
-        if (cancelled) return;
-        const message = error instanceof Error ? error.message : "Search failed unexpectedly.";
-        setSettled({ query, status: "error", results: [], error: message, providerOutcomes: [] });
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    return fetchCombinedResultsProgressively(providers, query, ({ results, providerOutcomes }, isFinal) => {
+      const allFailed =
+        isFinal && providerOutcomes.length > 0 && providerOutcomes.every((o) => o.status === "rejected");
+      if (allFailed) {
+        const message = providerOutcomes[0]?.error ?? "Search failed unexpectedly.";
+        setSettled({ query, status: "error", results: [], error: message, providerOutcomes });
+      } else {
+        setSettled({ query, status: "success", results, error: null, providerOutcomes });
+      }
+    });
   }, [providers, query]);
 
   const isCurrent = settled !== null && settled.query === query;
