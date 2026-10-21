@@ -34,11 +34,16 @@ export function AssetPreview({ asset }: AssetPreviewProps) {
         // natural size (via h-auto/w-auto), only ever shrinking to fit the padded
         // box (max-h-full/max-w-full) — never upscaling a low-res thumbnail to
         // fill the card. object-contain guarantees no distortion either way.
+        // `unoptimized`: every source already serves a sized thumbnail, and
+        // routing each one through Vercel's optimizer would burn the Hobby
+        // plan's 5,000 monthly transformations within a few dozen searches —
+        // after which thumbnails stop loading until the quota resets.
         <Image
           src={asset.thumbnailUrl!}
           alt={`${asset.name} preview thumbnail`}
           width={640}
           height={480}
+          unoptimized
           className="h-auto max-h-full w-auto max-w-full object-contain"
           onError={() => setImageFailed(true)}
         />

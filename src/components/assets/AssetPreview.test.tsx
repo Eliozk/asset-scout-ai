@@ -28,6 +28,15 @@ function makeAsset(overrides: Partial<AssetSearchResult>): AssetSearchResult {
 }
 
 describe("AssetPreview", () => {
+  it("loads the thumbnail straight from its source, never through the Vercel image optimizer (Hobby quota)", () => {
+    const { container } = render(
+      <AssetPreview asset={makeAsset({ thumbnailUrl: "https://cdn.polyhaven.com/thumb.png" })} />,
+    );
+    const src = container.querySelector("img")?.getAttribute("src");
+    expect(src).toBe("https://cdn.polyhaven.com/thumb.png");
+    expect(src).not.toContain("/_next/image");
+  });
+
   it("shows the CSS/gradient icon placeholder when no thumbnailUrl is present", () => {
     const { container } = render(<AssetPreview asset={makeAsset({ thumbnailUrl: undefined })} />);
     expect(container.querySelector("img")).toBeNull();
