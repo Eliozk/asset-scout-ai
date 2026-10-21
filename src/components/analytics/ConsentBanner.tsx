@@ -23,8 +23,7 @@ export function ConsentBanner() {
     >
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <p className="text-sm text-text-muted">
-          May we use Microsoft Clarity analytics cookies to see how visitors use AssetScout AI (clicks,
-          scrolling, and session replays with typed text masked)? Nothing is recorded unless you accept.{" "}
+          We use analytics cookies.{" "}
           <Link href="/legal" className="focus-ring rounded font-medium text-accent-cyan underline hover:text-foreground">
             Privacy &amp; Terms
           </Link>
