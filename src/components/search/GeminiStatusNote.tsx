@@ -9,10 +9,10 @@ import type { QueryUnderstandingStatus } from "@/hooks/useQueryUnderstanding";
  * nothing, so this never adds permanent visual noise once a search resolves.
  */
 const MESSAGES: Partial<Record<QueryUnderstandingStatus, string>> = {
-  understanding: "Understanding your request with Gemini…",
-  understood: "Gemini interpreted this query — results below use its English rewrite.",
+  understanding: "Understanding your request with AI…",
+  understood: "AI interpreted this query — results below use its English rewrite.",
   unavailable:
-    "Gemini interpretation isn't available right now — searching with your original text instead.",
+    "AI interpretation isn't available right now — searching with your original text instead.",
   cooldown: "Please wait a moment before searching again.",
 };
 

@@ -14,7 +14,7 @@ export function Footer() {
         <p>
           AssetScout AI searches {liveCount} sources live via their official APIs, plus {catalogCount}{" "}
           authorized indexed catalog — and links out to more marketplaces you can search or browse
-          yourself. An optional Gemini step can translate a natural-language request (English or
+          yourself. An optional AI step (Groq, with Gemini as backup) can translate a natural-language request (English or
           Hebrew) before searching; local, on-device semantic ranking powers &quot;AI Match&quot;;
           keyword relevance is the honest deterministic fallback everywhere else.{" "}
           <Link href="/sources" className="focus-ring rounded font-medium text-text-muted underline hover:text-foreground">

@@ -95,6 +95,21 @@ export default function LegalPage() {
           Gemini configuration detail is ever sent to your browser.
         </p>
         <p>
+          When a Groq API key is configured on the server, the same submitted search phrase is sent{" "}
+          <em>first</em> to Groq&apos;s API (GroqCloud) for the same interpretation, and Gemini is used
+          only as a backup if Groq is unavailable. Groq processes that request under its{" "}
+          <a
+            href="https://groq.com/privacy-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="focus-ring rounded font-medium text-accent-cyan underline"
+          >
+            privacy policy
+          </a>
+          ; Groq states that by default it does not retain customer data from inference requests, apart
+          from temporary logs it may keep for reliability or abuse investigations.
+        </p>
+        <p>
           AssetScout AI uses Vercel Web Analytics to collect anonymous, aggregate usage information,
           such as page views, referrers, approximate country, device, and browser type. Vercel Web
           Analytics does not use cookies and is not used here to identify individual visitors or build

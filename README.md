@@ -288,6 +288,8 @@ gitignored).
 | `SKETCHFAB_API_TOKEN` | No | Sketchfab's search works fully unauthenticated. An optional free token raises your own rate limit. |
 | `GEMINI_API_KEY` | No | Enables Gemini query understanding. Free key from [Google AI Studio](https://aistudio.google.com/apikey) — no billing account needed. Omitting it just runs local search exactly as before; every Gemini failure mode falls back the same way. Read server-side only, never sent to the browser. |
 | `GEMINI_MODEL` | No | Overrides the Gemini model (defaults to `gemini-3.5-flash-lite` — current stable, free-tier, structured-output-capable, confirmed via a live request). |
+| `GROQ_API_KEY` | No | Enables Groq (free, no card — console.groq.com/keys) as the fast primary query-understanding provider; Gemini becomes the backup. Server-side only. |
+| `GROQ_MODEL` | No | Overrides the Groq model (defaults to `openai/gpt-oss-20b` — free tier, strict structured outputs). |
 | `NEXT_PUBLIC_SITE_URL` | No | This app's own public URL, used for canonical links/sitemap/OG metadata. Falls back to `http://localhost:3000`. |
 
 ambientCG, Wikimedia Commons, NASA Image Library, and Openverse need no environment variable at all —

@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { SearchIntent } from "@/domain/search-intent";
-import { fetchSearchIntentFromGemini, isGeminiConfigured, type GeminiUnavailableReason } from "@/lib/gemini/fetch-intent";
+import type { GeminiUnavailableReason } from "@/lib/gemini/fetch-intent";
 import { prepareRawQueryForGemini } from "@/lib/gemini/validate-intent";
+import { isQueryUnderstandingConfigured, understandQuery } from "@/lib/query-understanding/understand-query";
 
 /**
- * Server-only Route Handler for Gemini query understanding. The client
- * (useQueryUnderstanding.ts) calls only this route — never the Gemini API
- * directly — so GEMINI_API_KEY never reaches the browser, matching the same
+ * Server-only Route Handler for AI query understanding (Groq first, Gemini as
+ * backup — see understand-query.ts). The client (useQueryUnderstanding.ts)
+ * calls only this route — never Groq or Gemini directly — so GROQ_API_KEY and
+ * GEMINI_API_KEY never reach the browser, matching the same
  * "provider called only from its own Route Handler" rule every other
  * provider in this app follows (AGENTS.md).
  *
@@ -102,7 +104,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<QueryUnderstandResponseBody>({ intent: null, reason: "empty-query" });
   }
 
-  if (!isGeminiConfigured()) {
+  if (!isQueryUnderstandingConfigured()) {
     // No key configured: never even attempt an SDK/network call.
     return NextResponse.json<QueryUnderstandResponseBody>({ intent: null, reason: "missing-key" });
   }
@@ -126,7 +128,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const promise = fetchSearchIntentFromGemini(cleanedQuery).then((result) => {
+  const promise = understandQuery(cleanedQuery).then((result) => {
     if (result.ok) {
       writeCache(key, result.intent);
       return { intent: result.intent as SearchIntent | null };
