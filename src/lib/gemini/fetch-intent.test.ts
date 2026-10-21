@@ -112,7 +112,7 @@ describe("fetchSearchIntentFromGemini", () => {
     expect(result).toEqual({ ok: false, reason: "network-error" });
   });
 
-  it("makes exactly one attempt per call — never retries internally for any failure reason", async () => {
+  it("makes exactly one attempt per call — never retries internally for any non-503 failure", async () => {
     mockGenerateContent.mockRejectedValue(new Error("Some transient error"));
     await fetchSearchIntentFromGemini("sword");
     expect(mockGenerateContent).toHaveBeenCalledTimes(1);
@@ -122,7 +122,52 @@ describe("fetchSearchIntentFromGemini", () => {
     mockGenerateContent.mockResolvedValue({ text: JSON.stringify(VALID_RAW_INTENT) });
     await fetchSearchIntentFromGemini("sword");
     const [args] = mockGenerateContent.mock.calls[0];
-    expect(args.model).toBe("gemini-3.1-flash-lite");
+    expect(args.model).toBe("gemini-3.5-flash-lite");
+  });
+
+  it("regression: never silently reverts to gemini-3.1-flash-lite, confirmed live (2026-10) to 503 on every request", async () => {
+    mockGenerateContent.mockResolvedValue({ text: JSON.stringify(VALID_RAW_INTENT) });
+    await fetchSearchIntentFromGemini("sword");
+    const [args] = mockGenerateContent.mock.calls[0];
+    expect(args.model).not.toBe("gemini-3.1-flash-lite");
+  });
+
+  it("on a 503 (overloaded), tries the fallback model exactly once and returns its result", async () => {
+    const overloaded = Object.assign(new Error("High demand"), { status: 503 });
+    mockGenerateContent
+      .mockRejectedValueOnce(overloaded)
+      .mockResolvedValueOnce({ text: JSON.stringify(VALID_RAW_INTENT) });
+
+    const result = await fetchSearchIntentFromGemini("sword");
+
+    expect(result.ok).toBe(true);
+    expect(mockGenerateContent).toHaveBeenCalledTimes(2);
+    expect(mockGenerateContent.mock.calls[1][0].model).toBe("gemini-flash-lite-latest");
+    // One shared deadline — the fallback never extends the total wait.
+    expect(mockGenerateContent.mock.calls[1][0].config.abortSignal).toBe(
+      mockGenerateContent.mock.calls[0][0].config.abortSignal,
+    );
+  });
+
+  it("returns the fallback's own failure reason when the fallback also fails, and stops there", async () => {
+    mockGenerateContent
+      .mockRejectedValueOnce(Object.assign(new Error("High demand"), { status: 503 }))
+      .mockRejectedValueOnce(Object.assign(new Error("Resource exhausted"), { status: 429 }));
+
+    const result = await fetchSearchIntentFromGemini("sword");
+
+    expect(result).toEqual({ ok: false, reason: "rate-limited" });
+    expect(mockGenerateContent).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not retry a 503 when the configured model already is the fallback model", async () => {
+    process.env.GEMINI_MODEL = "gemini-flash-lite-latest";
+    mockGenerateContent.mockRejectedValue(Object.assign(new Error("High demand"), { status: 503 }));
+
+    const result = await fetchSearchIntentFromGemini("sword");
+
+    expect(result).toEqual({ ok: false, reason: "upstream-error" });
+    expect(mockGenerateContent).toHaveBeenCalledTimes(1);
   });
 
   it("regression: never silently reverts to gemini-2.5-flash-lite, confirmed live (2026-07) to 404 for a new API key/account with 'no longer available to new users'", async () => {
@@ -134,11 +179,11 @@ describe("fetchSearchIntentFromGemini", () => {
   });
 
   it("uses GEMINI_MODEL when explicitly configured, overriding the default", async () => {
-    process.env.GEMINI_MODEL = "gemini-3.5-flash-lite";
+    process.env.GEMINI_MODEL = "gemini-3.5-flash";
     mockGenerateContent.mockResolvedValue({ text: JSON.stringify(VALID_RAW_INTENT) });
     await fetchSearchIntentFromGemini("sword");
     const [args] = mockGenerateContent.mock.calls[0];
-    expect(args.model).toBe("gemini-3.5-flash-lite");
+    expect(args.model).toBe("gemini-3.5-flash");
   });
 
   it("requests structured JSON output via responseMimeType + responseSchema", async () => {

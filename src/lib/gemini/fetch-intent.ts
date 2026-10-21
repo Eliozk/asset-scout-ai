@@ -38,8 +38,19 @@ export type GeminiIntentResult =
  * both succeeded, including with responseSchema structured output — verified
  * directly against the real API, not just the (stale) models docs page,
  * which still listed 2.5-flash-lite as available.
+ *
+ * Then "gemini-3.1-flash-lite" until it answered every live request (2026-10)
+ * with 503 UNAVAILABLE "experiencing high demand", while gemini-3.5-flash-lite
+ * succeeded on the same key with this module's real structured-output call.
  */
-const DEFAULT_MODEL = "gemini-3.1-flash-lite";
+const DEFAULT_MODEL = "gemini-3.5-flash-lite";
+
+/**
+ * Tried once, only when the primary model answers 503 (overloaded) — a
+ * capacity problem on Google's side, not a quota one, so a different free
+ * model is a reasonable second attempt. Never used for 429 or any other error.
+ */
+const OVERLOAD_FALLBACK_MODEL = "gemini-flash-lite-latest";
 
 /** Deliberately short — this sits inside a synchronous search flow; a slow Gemini call must not make the whole page feel broken. */
 const REQUEST_TIMEOUT_MS = 6_000;
@@ -54,11 +65,13 @@ function resolveModel(): string {
 }
 
 /**
- * Single-attempt, server-only call to the Gemini Developer API. Never
- * retries (including on 429 — see AGENTS.md-equivalent rule in the milestone
- * spec: "never automatically retry a 429"), never falls back to a paid
- * model, and aborts itself after REQUEST_TIMEOUT_MS via AbortSignal (the
- * SDK's own httpOptions.timeout is not reliably honored by the current
+ * Server-only call to the Gemini Developer API. Never retries (including on
+ * 429 — see AGENTS.md-equivalent rule in the milestone spec: "never
+ * automatically retry a 429"); the single exception is one attempt on
+ * OVERLOAD_FALLBACK_MODEL after a 503. Never falls back to a paid model, and
+ * aborts itself after REQUEST_TIMEOUT_MS via AbortSignal — one deadline shared
+ * by both attempts, so the fallback never extends the total wait (the SDK's
+ * own httpOptions.timeout is not reliably honored by the current
  * generateContent implementation, so AbortSignal is the mechanism that
  * actually works — see googleapis/js-genai#1277).
  *
@@ -74,23 +87,35 @@ export async function fetchSearchIntentFromGemini(rawQuery: string): Promise<Gem
 
   const client = new GoogleGenAI({ apiKey });
   const model = resolveModel();
+  const abortSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
 
-  let responseText: string | undefined;
-  try {
+  const generate = async (modelId: string) => {
     const response = await client.models.generateContent({
-      model,
+      model: modelId,
       contents: buildUserContent(rawQuery),
       config: {
         systemInstruction: SEARCH_INTENT_SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseSchema: GEMINI_SEARCH_INTENT_SCHEMA,
-        abortSignal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        abortSignal,
         temperature: 0.1, // low — this is an extraction/classification task, not creative writing
       },
     });
-    responseText = response.text;
+    return response.text;
+  };
+
+  let responseText: string | undefined;
+  try {
+    responseText = await generate(model);
   } catch (error) {
-    return { ok: false, reason: classifyGeminiError(error) };
+    if (extractStatusCode(error) !== 503 || model === OVERLOAD_FALLBACK_MODEL) {
+      return { ok: false, reason: classifyGeminiError(error) };
+    }
+    try {
+      responseText = await generate(OVERLOAD_FALLBACK_MODEL);
+    } catch (fallbackError) {
+      return { ok: false, reason: classifyGeminiError(fallbackError) };
+    }
   }
 
   if (!responseText || responseText.trim() === "") {

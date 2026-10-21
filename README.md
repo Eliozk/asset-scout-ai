@@ -287,7 +287,7 @@ gitignored).
 | `PIXABAY_API_KEY` | Yes, for Pixabay results | Free key from [pixabay.com/api/docs](https://pixabay.com/api/docs/). Read server-side only; omitting it just omits Pixabay from results — everything else still works. |
 | `SKETCHFAB_API_TOKEN` | No | Sketchfab's search works fully unauthenticated. An optional free token raises your own rate limit. |
 | `GEMINI_API_KEY` | No | Enables Gemini query understanding. Free key from [Google AI Studio](https://aistudio.google.com/apikey) — no billing account needed. Omitting it just runs local search exactly as before; every Gemini failure mode falls back the same way. Read server-side only, never sent to the browser. |
-| `GEMINI_MODEL` | No | Overrides the Gemini model (defaults to `gemini-3.1-flash-lite` — current stable, free-tier, structured-output-capable, confirmed via a live request). |
+| `GEMINI_MODEL` | No | Overrides the Gemini model (defaults to `gemini-3.5-flash-lite` — current stable, free-tier, structured-output-capable, confirmed via a live request). |
 | `NEXT_PUBLIC_SITE_URL` | No | This app's own public URL, used for canonical links/sitemap/OG metadata. Falls back to `http://localhost:3000`. |
 
 ambientCG, Wikimedia Commons, NASA Image Library, and Openverse need no environment variable at all —
